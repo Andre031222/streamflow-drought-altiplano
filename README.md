@@ -1,4 +1,4 @@
-# Open-data ML for streamflow and hydrological drought forecasting (Peruvian Altiplano)
+# An Open Multi-Station Benchmark for Streamflow Forecasts and Hydrological Drought Indication in the Peruvian Altiplano
 
 **Venue target:** ICICCDS 2027  
 **Authors:** Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra  

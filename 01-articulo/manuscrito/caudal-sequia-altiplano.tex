@@ -1,0 +1,324 @@
+\documentclass[graybox]{svmult}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{type1cm}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{cite}
+\usepackage[bottom]{footmisc}
+
+\input{cifras.tex}
+
+\begin{document}
+
+\title*{Open-Data Machine Learning for Streamflow and Hydrological Drought Forecasting in the Peruvian Altiplano}
+\titlerunning{Streamflow Forecasting in the Peruvian Altiplano}
+\author{Richar Andre Vilca-Solorzano and Dina Maribel Yana-Yucra}
+\authorrunning{R. A. Vilca-Solorzano and D. M. Yana-Yucra}
+\institute{Richar Andre Vilca-Solorzano (corresponding author) \at
+Professional School of Statistical and Computer Engineering,
+Faculty of Statistical and Computer Engineering (FINESI),
+National University of the Altiplano (UNAP), Puno, Peru.\\
+\email{\emailAndre{}}.
+ORCID: \url{\orcidAndre{}}
+\and
+Dina Maribel Yana-Yucra \at
+Professional School of Statistical and Computer Engineering,
+Faculty of Statistical and Computer Engineering (FINESI),
+National University of the Altiplano (UNAP), Puno, Peru.\\
+\email{\emailMaribel{}}.
+ORCID: \url{\orcidMaribel{}}}
+
+\maketitle
+
+\abstract*{Hydrological variability and drought threaten water security in the Peruvian Altiplano, where sparse gauges and proprietary tools limit operational forecasting. We release a fully open machine-learning pipeline for short-horizon streamflow forecasts and a simplified standardized streamflow drought indicator. Quality-controlled daily discharge from Andean-GC is paired with Open-Meteo/ERA5-Land precipitation across a \nStations{}-station Peru benchmark (gauges with $\ge$5000 QC days), with Altiplano focus on \stationId{} (\stationName{}). Persistence and seasonal climatology are compared with Ridge, random forests, gradient boosting, XGBoost and a small multilayer perceptron under chronological splits and walk-forward checks, reporting RMSE, MAE, NSE, Kling--Gupta efficiency (KGE) and skill versus persistence. At a one-day lead, persistence remains strongest (NSE~$=$\nsePersHOne{}); at seven days, Ridge improves on persistence (NSE~$=$\nseRidgeHSeven{} vs.~\nsePersHSeven{}; skill~$=$\skillRidgeHSeven{}), and all \nStations{} gauges show positive best-model skill (median~$=$\medianBestSkillHSeven{}). The study is a transparent Andean benchmark, not a replacement for national hydrological services.}
+
+\abstract{Hydrological variability and drought threaten water security in the Peruvian Altiplano, where sparse gauges and proprietary tools limit operational forecasting. We release a fully open machine-learning pipeline for short-horizon streamflow forecasts and a simplified standardized streamflow drought indicator. Quality-controlled daily discharge from Andean-GC is paired with Open-Meteo/ERA5-Land precipitation across a \nStations{}-station Peru benchmark (gauges with $\ge$5000 QC days), with Altiplano focus on \stationId{} (\stationName{}). Persistence and seasonal climatology are compared with Ridge, random forests, gradient boosting, XGBoost and a small multilayer perceptron under chronological splits and walk-forward checks, reporting RMSE, MAE, NSE, Kling--Gupta efficiency (KGE) and skill versus persistence. At a one-day lead, persistence remains strongest (NSE~$=$\nsePersHOne{}); at seven days, Ridge improves on persistence (NSE~$=$\nseRidgeHSeven{} vs.~\nsePersHSeven{}; skill~$=$\skillRidgeHSeven{}), and all \nStations{} gauges show positive best-model skill (median~$=$\medianBestSkillHSeven{}). The study is a transparent Andean benchmark, not a replacement for national hydrological services.
+\newline\keywords{streamflow forecasting, hydrological drought, Altiplano, open data, machine learning, Nash--Sutcliffe efficiency, Kling--Gupta efficiency, multi-station benchmark}}
+
+\section{Introduction}
+\label{sec:intro}
+
+Communities and irrigated agriculture in the Peruvian Altiplano depend on highly seasonal streamflow into the Lake Titicaca system. Climate variability, glacier retreat in headwaters and limited real-time tooling make even short-range discharge forecasts valuable for water allocation and drought awareness. Large-sample machine-learning (ML) hydrology has shown that data-driven models can compete with process models when trained carefully \cite{kratzert2019lstm}, yet many published pipelines remain hard to reproduce in Andean settings because gauges, licences and code are fragmented.
+
+This paper contributes a laptop-scale, open-data multi-station benchmark with Altiplano focus, including:
+\begin{enumerate}
+\item a documented provenance inventory (Andean-GC discharge \cite{aguayo2026andeangc} and Open-Meteo precipitation from ERA5-Land \cite{munozsabater2021era5land,hersbach2020era5}) for \nStations{} long Peru gauges;
+\item strict temporal validation without leakage, plus expanding-window walk-forward on the focus gauge;
+\item honest comparison to persistence and climatology using NSE \cite{nash1970}, KGE \cite{klinggupta2009} and skill versus persistence;
+\item a documented SSI-30 drought indicator (month-wise $z$-score of the 30-day mean; see limitations relative to Vicente-Serrano et~al.\ \cite{vicenteserrano2012ssi});
+\item publication-ready figures and Python code in a public GitHub repository (\url{\githubUrl{}}).
+\end{enumerate}
+This hydrology paper continues an open Altiplano research line by the same team: a prior multi-station comparative climate-ML benchmark for frost/$T_{\min}$ \cite{torres2025frost}, the AgroYachay cloud IoT/LLM platform for Andean smallholders \cite{torres2026agroyachay}, and AgroCommish, its companion desktop edge-commissioning tool released as open software on Zenodo \cite{vilca2026agrocommish} (SoftwareX manuscript in preparation; not cited here as a published SoftwareX article). Unlike those farm-IoT systems, the present work is open analysis and short-horizon streamflow/drought forecasting rather than sensor provisioning or farm-node telemetry.
+
+
+\section{Related Work}
+\label{sec:related}
+
+Data-driven streamflow models are now common in mountain basins. Random forests with engineered satellite and ground precipitation features have reached high NSE at short leads in tropical Andean catchments \cite{munoz2025rf}. In Peru, neural networks have been used for monthly forecasts in high-Andean basins such as Crisnejas \cite{ramos2023crisnejas}, and $k$-nearest neighbours have been applied to daily flows of the Ramis river in the Altiplano \cite{quispe2023ramis}. Large-sample LSTM hydrology provides methodological context for benchmarking ML against process baselines \cite{kratzert2019lstm}. Closely related prior work by the present authors compared twelve statistical, ML and deep-learning models for frost and minimum-temperature prediction across thirteen Altiplano stations \cite{torres2025frost} (open repository: \url{https://github.com/Andre031222/frost-prediction-altiplano-puno}); that IJACSA study is prior Altiplano multi-station comparative climate ML (frost/$T_{\min}$), whereas here we focus on open Andean-GC discharge, hydrological drought indication and honest persistence/KGE reporting. In parallel, AgroYachay \cite{torres2026agroyachay} (\url{https://github.com/Andre031222/agroyachay}; Zenodo doi:10.5281/zenodo.20829992) provides Andean smallholder IoT/LLM decision support in the cloud, and AgroCommish \cite{vilca2026agrocommish} (\url{https://github.com/Andre031222/agrocommish}; Zenodo doi:10.5281/zenodo.20655609) is the companion desktop tool for ESP32 edge commissioning (software release; SoftwareX in preparation). This paper is the open hydrology analysis/forecasting branch of that lineage, not a farm-IoT systems paper.
+
+Hydrological drought monitoring often relies on standardized indices. Vicente-Serrano et~al.\ proposed robust computation of the Standardized Streamflow Index (SSI) \cite{vicenteserrano2012ssi}. Our SSI-30 indicator is a simplified month-wise $z$-score of rolling discharge for the open benchmark, not a full distributional SSI implementation. Reanalysis precipitation is obtained via Open-Meteo from ERA5-Land \cite{munozsabater2021era5land,hersbach2020era5}. Model skill reporting follows NSE \cite{nash1970}, KGE \cite{klinggupta2009} and multi-metric guidelines for watershed models \cite{moriasi2007}.
+
+Table~\ref{tab:related} situates this work against prior Andean and Peruvian ML streamflow or drought studies already cited above. The distinctive angle here is an open multi-station Peru benchmark with explicit persistence and KGE honesty at multiple leads, rather than single-basin peak NSE claims alone.
+
+\begin{table}[t]
+\centering
+\caption{Compact comparison of related Andean/Peru ML streamflow studies versus this open multi-station benchmark. Entries summarise scope as reported in the cited sources; they are not a meta-analysis of reimplemented scores.}
+\label{tab:related}
+\footnotesize
+\begin{tabular}{p{2.4cm}p{2.1cm}p{1.6cm}p{2.0cm}p{2.6cm}}
+\toprule
+Study & Domain & Lead / scale & Persistence / KGE & Open multi-station \\
+\midrule
+Mu{\~n}oz et~al.\ \cite{munoz2025rf} & Tropical Andes (Ecuador), RF + satellite precip & Hourly, one catchment & NSE focus; not multi-gauge Peru & No \\
+Ramos et~al.\ \cite{ramos2023crisnejas} & Crisnejas, Peru; ANN & Monthly & Basin-specific ANN & No \\
+Quispe et~al.\ \cite{quispe2023ramis} & Ramis (Altiplano), Peru; $k$-NN & Daily, one river & Single-basin forecast & No \\
+Kratzert et~al.\ \cite{kratzert2019lstm} & Large-sample LSTM hydrology & Catchment CAMELS-style & Strong baselines; not Andean open gauges & Large-sample (non-Peru) \\
+Torres-Cruz et~al.\ \cite{torres2025frost} & Altiplano, Peru; frost/$T_{\min}$ ML benchmark & Daily, 13 stations & Multi-model skill; not streamflow & Yes (climate, not discharge) \\
+This study & Peru Andean-GC, Altiplano focus & Daily $h=1,7$; \nStations{} gauges & Persistence, NSE, KGE, skill & Yes (open) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Data and Study Area}
+\label{sec:data}
+
+We extract daily quality-controlled discharge for all Peru SENAMHI gauges in Andean-GC \cite{aguayo2026andeangc} with $\mathrm{days\_w\_data\_qc}\ge 5000$ ($n=\nStations{}$), released on Zenodo under CC~BY~4.0. The Altiplano focus station is \stationId{} (\stationName{}; approximately $15.47^\circ$\,S, $70.22^\circ$\,W; Coata--Cabanillas / Titicaca system). Southern Peru gauges in the set also include Salamanca and Oco\~{n}a. Daily precipitation at each gauge latitude/longitude is obtained from the Open-Meteo historical API (ERA5-Land) \cite{munozsabater2021era5land,hersbach2020era5}. For Cabanillas, the modelling window after feature alignment spans \seriesStart{} to \seriesEnd{}. Figure~\ref{fig:map} maps the \nStations{} gauges; Fig.~\ref{fig:hydro} shows the observed hydrograph with chronological train, validation and test segments.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.82\textwidth]{figuras/fig00_station_map.pdf}
+\caption{Locations of the \nStations{} Peru Andean-GC gauges with $\ge$5000 QC days used in the open benchmark. The Altiplano focus station \stationName{} (\stationId{}) is highlighted.}
+\label{fig:map}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig01_hydrograph_cabanillas.pdf}
+\caption{Daily discharge at \stationName{} with chronological train, validation and test periods.}
+\label{fig:hydro}
+\end{figure}
+
+\section{Methods}
+\label{sec:methods}
+
+\subsection{Features}
+For lead times $h\in\{1,7\}$ days we predict $Q_{t+h}$ from \nFeatures{} predictors: Fourier seasonality ($\sin$/$\cos$ of day-of-year), discharge lags $\{1,2,3,7,14,30\}$, rolling means and standard deviations over $\{7,14,30\}$ days, and precipitation lags/rolls $\{0,1,2,3,7\}$ and $\{7,30\}$.
+
+\subsection{Models and baselines}
+Baselines: persistence ($Q_{t+h}=Q_t$) and seasonal climatology (mean discharge by day-of-year on the training set). Learners: Ridge regression, Random Forest, Gradient Boosting, XGBoost and a small multilayer perceptron. All fits run on a commodity laptop CPU (full multi-station run $\approx$\runtimeSec{}\,s).
+
+\subsection{Evaluation}
+We use a chronological 70/15/15 split (train/validation/test) with no shuffling on every station. Test metrics are RMSE, MAE, NSE, KGE \cite{klinggupta2009} and skill versus persistence,
+\begin{equation}
+\mathrm{skill}=1-\frac{\mathrm{RMSE}_{\mathrm{model}}}{\mathrm{RMSE}_{\mathrm{persistence}}}.
+\end{equation}
+Positive skill means improvement over persistence. On the focus gauge we additionally run an expanding-window walk-forward protocol (three folds) for Ridge versus persistence. We also compute SSI-30 as the month-wise $z$-score of the 30-day rolling mean discharge (parametric approximation; Fig.~\ref{fig:ssi}). This is not the full Vicente-Serrano distributional transform and should not be treated as an operational SSI product \cite{vicenteserrano2012ssi}.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Focus station (Cabanillas)}
+Table~\ref{tab:metrics} summarises the held-out chronological test period at \stationName{} (\testStart{}--\testEnd{}; $n_{\mathrm{test}}=\nTest{}$). At $h=1$, persistence achieves the best NSE (\nsePersHOne{}; KGE~$=$\kgePersHOne{}); the best ML model is MLP (NSE~$=$\nseMlpHOne{}, KGE~$=$\kgeMlpHOne{}) but does not beat persistence on RMSE. At $h=7$, Ridge attains NSE~$=$\nseRidgeHSeven{} (KGE~$=$\kgeRidgeHSeven{}) versus persistence NSE~$=$\nsePersHSeven{} (skill~$=$\skillRidgeHSeven{}), with MLP close behind. Expanding-window walk-forward on Cabanillas confirms positive Ridge skill at $h=7$ in all three folds (mean skill~$=$\wfMeanSkillHSeven{}).
+
+\begin{table}[t]
+\centering
+\caption{Test-set metrics at Puente Isla Cabanillas (chronological split). Skill is relative to persistence.}
+\label{tab:metrics}
+\footnotesize
+\begin{tabular}{llrrrrr}
+\toprule
+Model & $h$ & RMSE & MAE & NSE & KGE & Skill \\
+\midrule
+Persistence & 1 & 11.07 & 4.69 & 0.902 & 0.951 & 0.000 \\
+Climatology & 1 & 28.47 & 15.98 & 0.353 & 0.506 & $-1.571$ \\
+Ridge & 1 & 13.84 & 8.08 & 0.847 & 0.895 & $-0.250$ \\
+RandomForest & 1 & 13.32 & 6.51 & 0.858 & 0.905 & $-0.203$ \\
+GradientBoosting & 1 & 12.82 & 6.63 & 0.869 & 0.896 & $-0.158$ \\
+MLP & 1 & 12.69 & 6.55 & 0.871 & 0.912 & $-0.146$ \\
+XGBoost & 1 & 12.95 & 6.50 & 0.866 & 0.901 & $-0.169$ \\
+\midrule
+Persistence & 7 & 25.96 & 12.57 & 0.462 & 0.731 & 0.000 \\
+Climatology & 7 & 28.50 & 15.93 & 0.352 & 0.509 & $-0.098$ \\
+Ridge & 7 & 23.74 & 14.28 & 0.550 & 0.674 & 0.086 \\
+RandomForest & 7 & 27.63 & 14.60 & 0.391 & 0.626 & $-0.064$ \\
+GradientBoosting & 7 & 25.64 & 13.95 & 0.475 & 0.639 & 0.012 \\
+MLP & 7 & 24.45 & 13.40 & 0.523 & 0.679 & 0.058 \\
+XGBoost & 7 & 27.16 & 14.74 & 0.412 & 0.626 & $-0.046$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Multi-station Peru benchmark}
+Across all \nStations{} gauges at $h=7$, the best ML model per station yields positive skill versus persistence in \nPosSkillHSeven{}/\nStations{} cases (median skill~$=$\medianBestSkillHSeven{}). Ridge alone is skill-positive at every station (mean NSE~$=$\meanNseRidgeHSeven{} vs.\ persistence mean NSE~$=$\meanNsePersHSeven{}; mean skill~$=$\meanSkillRidgeHSeven{}; mean KGE~$=$\meanKgeRidgeHSeven{}). Figures~\ref{fig:heatmap}--\ref{fig:nsebars} summarise cross-station skill and NSE.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig02_forecast_test_h7.pdf}
+\caption{Observed versus forecast discharge on the Cabanillas test set at a 7-day lead.}
+\label{fig:forecast}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig04_skill_bars.pdf}
+\caption{Skill versus persistence by model and lead time at \stationName{}. Positive values favour the learner.}
+\label{fig:skill}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig06_multistation_skill_heatmap_h7.pdf}
+\caption{Multi-station skill versus persistence at a 7-day lead (Peru Andean-GC gauges with $\ge$5000 QC days).}
+\label{fig:heatmap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/fig07_multistation_nse_bars_h7.pdf}
+\caption{Multi-station NSE at a 7-day lead for Ridge versus persistence markers.}
+\label{fig:nsebars}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figuras/fig05_ssi30.pdf}
+\caption{SSI-30 at \stationName{}: month-wise $z$-score of the 30-day rolling mean (parametric approximation).}
+\label{fig:ssi}
+\end{figure}
+
+\section{Discussion}
+\label{sec:discussion}
+
+The one-day result is a feature, not a failure: when autocorrelation is strong, claiming ``ML superiority'' without a persistence baseline would be misleading. The seven-day gain of Ridge and MLP is modest but reproducible across the Peru gauge set and obtained with open data and minutes of CPU time. Walk-forward folds on Cabanillas support the chronological $h=7$ skill signal.
+
+Limitations include: (i)~reanalysis precipitation rather than local rain gauges; (ii)~no routing or process constraints; (iii)~SSI-30 as a $z$-score approximation rather than a full distributional SSI \cite{vicenteserrano2012ssi}; (iv)~heterogeneous record eras among Cordillera Blanca historical gauges versus modern Altiplano records; (v)~no formal uncertainty quantification or operational data-assimilation loop. Multi-basin transfer learning, local SENAMHI precipitation and full SSI implementations are natural extensions. This work does not replace national hydrological services or institutional warning systems.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We present an open multi-station Peru streamflow forecasting benchmark with Altiplano focus, honest baselines, NSE/KGE reporting, SSI-30 drought indication and Springer-ready evidence. At a one-day lead, persistence dominates; at seven days, lightweight linear and neural models provide positive skill on all \nStations{} long gauges tested. Code, metrics and figures are hosted in a public GitHub repository: \url{\githubUrl{}}.
+
+\section*{Data availability}
+Daily QC discharge is from Andean-GC v1.1 on Zenodo (CC~BY~4.0; doi:\url{https://doi.org/10.5281/zenodo.18035801}). Daily precipitation was retrieved from the Open-Meteo Historical Weather API (ERA5-Land). Station extracts, precip caches and processed tables are documented in the project inventory file \texttt{INVENTARIO.md} under \texttt{02-datos/fuentes/}.
+
+\section*{Code availability}
+Analysis code (feature construction, models, metrics, figures) is provided under an MIT license in the public GitHub repository:
+\url{\githubUrl{}}.
+Reproduce with \texttt{python~03-codigo/run\_experiment.py} after installing \texttt{requirements.txt}.
+
+\section*{Author contributions}
+R.A.V.-S.: conceptualization, data curation, methodology, software, formal analysis, visualization, writing---original draft. D.M.Y.-Y.: methodology, validation, writing---review and editing. Both authors approved the final manuscript.
+
+\section*{Competing interests}
+The authors declare no competing interests.
+
+\section*{Ethics and limitations}
+No human subjects or personal data were used. Streamflow and reanalysis fields are public open data. Forecasts are research benchmarks only and must not be used as sole input for flood or drought emergency decisions without institutional validation.
+
+\section*{Acknowledgements}
+
+The authors thank open-data providers Andean-GC and Open-Meteo/Copernicus, and Universidad Nacional del Altiplano (UNAP) / FINESI for academic affiliation. AgroYachay and AgroCommish are cited only as related Andean open-source software lineage; this conference paper is an independent open hydrology benchmark.
+
+
+\begin{thebibliography}{99}
+
+\bibitem{aguayo2026andeangc}
+R.~Aguayo, H.~Zekollari, M.~van~Tiel, J.~Bolibar, L.~Van~Tricht, A.~I.~Ayala~Ramos, L.~Ultee.
+\newblock Andean Glacierized Catchment ({Andean-GC}) dataset (Version v1.0).
+\newblock Zenodo (2026).
+\newblock doi:\url{https://doi.org/10.5281/zenodo.18035801}
+
+\bibitem{nash1970}
+J.~E.~Nash, J.~V.~Sutcliffe.
+\newblock River flow forecasting through conceptual models part {I}---A discussion of principles.
+\newblock \emph{Journal of Hydrology} \textbf{10}(3), 282--290 (1970).
+\newblock doi:\url{https://doi.org/10.1016/0022-1694(70)90255-6}
+
+\bibitem{klinggupta2009}
+H.~V.~Gupta, H.~Kling, K.~K.~Yilmaz, G.~F.~Martinez.
+\newblock Decomposition of the mean squared error and {NSE} performance criteria: Implications for improving hydrological modelling.
+\newblock \emph{Journal of Hydrology} \textbf{377}(1--2), 80--91 (2009).
+\newblock doi:\url{https://doi.org/10.1016/j.jhydrol.2009.08.003}
+
+\bibitem{torres2026agroyachay}
+F.~Torres-Cruz, R.~A.~Vilca-Solorzano, D.~M.~Yana-Yucra, V.~Iba{\~n}ez-Quispe, E.~L.~Fuentes-Navarro.
+\newblock {AgroYachay}: An open-source {IoT} and large-language-model platform supporting agronomic and economic decision-making for {Andean} smallholders.
+\newblock \emph{SoftwareX} \textbf{36}, 103037 (2026).
+\newblock doi:\url{https://doi.org/10.1016/j.softx.2026.103037}.
+\newblock Source code: \url{https://github.com/Andre031222/agroyachay}; Zenodo: doi:\url{https://doi.org/10.5281/zenodo.20829992}
+
+\bibitem{vilca2026agrocommish}
+R.~A.~Vilca-Solorzano, D.~M.~Yana-Yucra, R.~Quispe-Vargas, V.~Iba{\~n}ez-Quispe, F.~Torres-Cruz.
+\newblock {AgroCommish}: A Plug-and-Play Desktop Tool for End-to-End Manufacturing and Commissioning of {ESP32}-Based Agricultural {IoT} Sensor Nodes.
+\newblock Zenodo software release (2026).
+\newblock doi:\url{https://doi.org/10.5281/zenodo.20655609}.
+\newblock Source code: \url{https://github.com/Andre031222/agrocommish}.
+\newblock Note: open software archive; \emph{SoftwareX} manuscript in preparation (not a published journal article).
+
+
+\bibitem{torres2025frost}
+F.~Torres-Cruz, D.~M.~Yana-Yucra, R.~A.~Vilca-Solorzano.
+\newblock Comparative Analysis of Statistical, Machine Learning, and Deep Learning Approaches for Frost Prediction in the High Andean Region of Peru.
+\newblock \emph{International Journal of Advanced Computer Science and Applications ({IJACSA})} \textbf{16}(9) (2025).
+\newblock doi:\url{https://doi.org/10.14569/IJACSA.2025.0160992}.
+\newblock Open code/data: \url{https://github.com/Andre031222/frost-prediction-altiplano-puno}
+
+\bibitem{hersbach2020era5}
+H.~Hersbach et~al.
+\newblock The {ERA5} global reanalysis.
+\newblock \emph{Quarterly Journal of the Royal Meteorological Society} \textbf{146}(730), 1999--2049 (2020).
+\newblock doi:\url{https://doi.org/10.1002/qj.3803}
+
+\bibitem{munozsabater2021era5land}
+J.~Mu{\~n}oz-Sabater et~al.
+\newblock {ERA5-Land}: a state-of-the-art global reanalysis dataset for land applications.
+\newblock \emph{Earth System Science Data} \textbf{13}, 4349--4383 (2021).
+\newblock doi:\url{https://doi.org/10.5194/essd-13-4349-2021}
+
+\bibitem{kratzert2019lstm}
+F.~Kratzert, D.~Klotz, G.~Shalev, G.~Klambauer, S.~Hochreiter, G.~Nearing.
+\newblock Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets.
+\newblock \emph{Hydrology and Earth System Sciences} \textbf{23}, 5089--5110 (2019).
+\newblock doi:\url{https://doi.org/10.5194/hess-23-5089-2019}
+
+\bibitem{vicenteserrano2012ssi}
+S.~M.~Vicente-Serrano, J.~I.~L{\'o}pez-Moreno, S.~Beguer{\'i}a, J.~Lorenzo-Lacruz, C.~Azorin-Molina, E.~Mor{\'a}n-Tejeda.
+\newblock Accurate computation of a streamflow drought index.
+\newblock \emph{Journal of Hydrologic Engineering} \textbf{17}(2), 318--332 (2012).
+\newblock doi:\url{https://doi.org/10.1061/(ASCE)HE.1943-5584.0000433}
+
+\bibitem{munoz2025rf}
+P.~Mu{\~n}oz, D.~F.~Mu{\~n}oz, J.~Orellana-Alvear, R.~C{\'e}lleri.
+\newblock Enhancing runoff forecasting through the integration of satellite precipitation data and hydrological knowledge into machine learning models.
+\newblock \emph{Natural Hazards} \textbf{121}, 3915--3937 (2025).
+\newblock doi:\url{https://doi.org/10.1007/s11069-024-06939-w}
+
+\bibitem{ramos2023crisnejas}
+C.~Ramos et~al.
+\newblock Predicci{\'o}n de caudales mensuales en r{\'i}os de cuencas altoandinas con enfoque de redes neuronales artificiales. Caso: r{\'i}o Crisnejas, Per{\'u}.
+\newblock \emph{Tecnolog{\'i}a y Ciencias del Agua} \textbf{14}(1) (2023).
+\newblock doi:\url{https://doi.org/10.24850/j-tyca-14-01-04}
+
+\bibitem{quispe2023ramis}
+W.~Quispe et~al.
+\newblock Hydrological modeling based on the {KNN} algorithm: An application for the forecast of daily flows of the Ramis river, Peru.
+\newblock \emph{Tecnolog{\'i}a y Ciencias del Agua} \textbf{14}(2) (2023).
+\newblock doi:\url{https://doi.org/10.24850/j-tyca-14-02-05}
+
+\bibitem{moriasi2007}
+D.~N.~Moriasi, J.~G.~Arnold, M.~W.~Van~Liew, R.~L.~Bingner, R.~D.~Harmel, T.~L.~Veith.
+\newblock Model evaluation guidelines for systematic quantification of accuracy in watershed simulations.
+\newblock \emph{Transactions of the ASABE} \textbf{50}(3), 885--900 (2007).
+\newblock doi:\url{https://doi.org/10.13031/2013.23153}
+
+\end{thebibliography}
+
+
+\end{document}

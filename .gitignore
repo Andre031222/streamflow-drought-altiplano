@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+*.py[cod]
+.Python
+.DS_Store
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+01-articulo/manuscrito/*.pdf
+!01-articulo/manuscrito/.gitkeep
+.ipynb_checkpoints/
+
+# Heavy raw Andean-GC dump (download from Zenodo; see README / INVENTARIO)
+02-datos/crudos/andean-gc/AndeanGC_data_1950_2024_qc.csv
+
+# Springer vendor zips / Word templates (cls/bst already in manuscrito/)
+05-plantilla-springer/*.zip
+05-plantilla-springer/Manuscript_Guidelines.pdf
+05-plantilla-springer/T1-book.dot
+05-plantilla-springer/readme-T1-book.pdf

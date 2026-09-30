@@ -1,0 +1,14 @@
+gauge_id,gauge_name,slug,gauge_lat,gauge_lon,days_w_data_qc,n_extracted,date_start,date_end,elev_mean,basin_area,station_file,is_altiplano_focus,is_southern_peru
+P00000031,La Capilla,la_capilla,-12.5219,-76.4964,18420,18420,1950-01-01,2024-12-05,3539.1344,2153.176,02-datos/crudos/stations/P00000031_la_capilla_daily_qc.csv,False,False
+P00000008,Condorcerro,condorcerro,-8.65,-78.25,17517,17517,1973-09-01,2024-12-31,3650.7084,10617.5375,02-datos/crudos/stations/P00000008_condorcerro_daily_qc.csv,False,False
+P00000041,Salamanca,salamanca,-15.5033,-72.8318,15352,15352,1965-01-01,2018-08-02,4717.3294,1108.4461,02-datos/crudos/stations/P00000041_salamanca_daily_qc.csv,False,True
+P00000047,Egemsa Km 105,egemsa_km_105,-13.1831,-72.5336,14308,14308,1985-01-01,2024-12-31,4196.794,9600.6916,02-datos/crudos/stations/P00000047_egemsa_km_105_daily_qc.csv,False,False
+P00000027,Cahua,cahua,-10.606,-77.3439,9131,9131,2000-01-01,2024-12-31,3846.1303,3387.9113,02-datos/crudos/stations/P00000027_cahua_daily_qc.csv,False,False
+P00000022,Recreta,recreta,-10.0333,-77.3333,7481,7481,1953-01-01,1974-09-02,4318.8976,346.1517,02-datos/crudos/stations/P00000022_recreta_daily_qc.csv,False,False
+P00000021,Quitaracsa,quitaracsa,-8.7884,-77.8454,6928,6928,1952-09-01,1974-09-02,4244.7704,388.374,02-datos/crudos/stations/P00000021_quitaracsa_daily_qc.csv,False,False
+P00000005,Colcas,colcas,-8.9167,-77.8333,6796,6796,1954-01-01,1974-07-02,4308.9143,239.1952,02-datos/crudos/stations/P00000005_colcas_daily_qc.csv,False,False
+P00000003,Chancos,chancos,-9.3255,-77.5593,6739,6739,1953-08-01,1974-09-02,4458.8733,218.364,02-datos/crudos/stations/P00000003_chancos_daily_qc.csv,False,False
+P00000016,Pachacoto,pachacoto,-9.853,-77.4023,6701,6701,1952-12-09,1974-09-02,4605.9697,209.3256,02-datos/crudos/stations/P00000016_pachacoto_daily_qc.csv,False,False
+P00000055,Puente Isla Cabanillas,puente_isla_cabanillas,-15.4721,-70.2244,6572,6572,1994-07-16,2024-12-31,4470.744,2842.9998,02-datos/crudos/stations/P00000055_puente_isla_cabanillas_daily_qc.csv,True,True
+P00000011,Llanganuco,llanganuco,-9.0707,-77.64,6398,6398,1955-07-01,1974-09-02,4843.0498,81.8131,02-datos/crudos/stations/P00000011_llanganuco_daily_qc.csv,False,False
+P00000040,Ocoña,ocona,-16.4269,-73.1146,5701,5701,1970-09-01,2024-12-31,3761.2372,16016.9545,02-datos/crudos/stations/P00000040_ocona_daily_qc.csv,False,True

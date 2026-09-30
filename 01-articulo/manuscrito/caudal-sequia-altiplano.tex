@@ -53,7 +53,7 @@ This paper contributes a laptop-scale, open-data multi-station benchmark with Al
 \item strict temporal validation without leakage, plus expanding-window walk-forward on the focus gauge;
 \item honest comparison to persistence and climatology using NSE \cite{nash1970}, KGE \cite{klinggupta2009} and skill versus persistence;
 \item a documented SSI-30 drought indicator (month-wise $z$-score of the 30-day mean; see limitations relative to Vicente-Serrano et~al.\ \cite{vicenteserrano2012ssi});
-\item publication-ready figures and Python code in a public GitHub repository (\url{\githubUrl{}}).
+\item publication-ready figures and Python code in a public GitHub repository (\texttt{\githubUrl}).
 \end{enumerate}
 This hydrology paper continues an open Altiplano research line by the same team: a prior multi-station comparative climate-ML benchmark for frost/$T_{\min}$ \cite{torres2025frost}, the AgroYachay cloud IoT/LLM platform for Andean smallholders \cite{torres2026agroyachay}, and AgroCommish, its companion desktop edge-commissioning tool released as open software on Zenodo \cite{vilca2026agrocommish} (SoftwareX manuscript in preparation; not cited here as a published SoftwareX article). Unlike those farm-IoT systems, the present work is open analysis and short-horizon streamflow/drought forecasting rather than sensor provisioning or farm-node telemetry.
 
@@ -203,14 +203,14 @@ Limitations include: (i)~reanalysis precipitation rather than local rain gauges;
 \section{Conclusion}
 \label{sec:conclusion}
 
-We present an open multi-station Peru streamflow forecasting benchmark with Altiplano focus, honest baselines, NSE/KGE reporting, SSI-30 drought indication and Springer-ready evidence. At a one-day lead, persistence dominates; at seven days, lightweight linear and neural models provide positive skill on all \nStations{} long gauges tested. Code, metrics and figures are hosted in a public GitHub repository: \url{\githubUrl{}}.
+We present an open multi-station Peru streamflow forecasting benchmark with Altiplano focus, honest baselines, NSE/KGE reporting, SSI-30 drought indication and Springer-ready evidence. At a one-day lead, persistence dominates; at seven days, lightweight linear and neural models provide positive skill on all \nStations{} long gauges tested. Code, metrics and figures are hosted in a public GitHub repository: \texttt{\githubUrl}.
 
 \section*{Data availability}
 Daily QC discharge is from Andean-GC v1.1 on Zenodo (CC~BY~4.0; doi:\url{https://doi.org/10.5281/zenodo.18035801}). Daily precipitation was retrieved from the Open-Meteo Historical Weather API (ERA5-Land). Station extracts, precip caches and processed tables are documented in the project inventory file \texttt{INVENTARIO.md} under \texttt{02-datos/fuentes/}.
 
 \section*{Code availability}
 Analysis code (feature construction, models, metrics, figures) is provided under an MIT license in the public GitHub repository:
-\url{\githubUrl{}}.
+\texttt{\githubUrl}.
 Reproduce with \texttt{python~03-codigo/run\_experiment.py} after installing \texttt{requirements.txt}.
 
 \section*{Author contributions}

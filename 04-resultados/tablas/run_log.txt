@@ -1,0 +1,186 @@
+Stations in meta: 13
+XGBoost available: True
+
+=== P00000031 La Capilla ===
+  merged rows: 18420 | 1950-01-01 .. 2024-12-05
+  [P00000031 h=1d] Ridge              NSE=0.889 KGE=0.925 (0.0s)
+  [P00000031 h=1d] RandomForest       NSE=0.888 KGE=0.932 (1.1s)
+  [P00000031 h=1d] GradientBoosting   NSE=0.893 KGE=0.927 (4.6s)
+  [P00000031 h=1d] MLP                NSE=0.892 KGE=0.931 (0.8s)
+  [P00000031 h=1d] XGBoost            NSE=0.887 KGE=0.931 (0.4s)
+  [P00000031 h=7d] Ridge              NSE=0.671 KGE=0.751 (0.0s)
+  [P00000031 h=7d] RandomForest       NSE=0.704 KGE=0.808 (1.5s)
+  [P00000031 h=7d] GradientBoosting   NSE=0.696 KGE=0.785 (4.7s)
+  [P00000031 h=7d] MLP                NSE=0.683 KGE=0.821 (1.8s)
+  [P00000031 h=7d] XGBoost            NSE=0.704 KGE=0.813 (0.5s)
+
+=== P00000008 Condorcerro ===
+  merged rows: 17517 | 1973-09-01 .. 2024-12-31
+  [P00000008 h=1d] Ridge              NSE=0.864 KGE=0.868 (0.0s)
+  [P00000008 h=1d] RandomForest       NSE=0.853 KGE=0.836 (1.3s)
+  [P00000008 h=1d] GradientBoosting   NSE=0.845 KGE=0.802 (4.7s)
+  [P00000008 h=1d] MLP                NSE=0.870 KGE=0.879 (1.2s)
+  [P00000008 h=1d] XGBoost            NSE=0.845 KGE=0.814 (0.3s)
+  [P00000008 h=7d] Ridge              NSE=0.630 KGE=0.662 (0.0s)
+  [P00000008 h=7d] RandomForest       NSE=0.582 KGE=0.664 (1.2s)
+  [P00000008 h=7d] GradientBoosting   NSE=0.613 KGE=0.658 (4.7s)
+  [P00000008 h=7d] MLP                NSE=0.627 KGE=0.660 (2.1s)
+  [P00000008 h=7d] XGBoost            NSE=0.619 KGE=0.683 (0.4s)
+
+=== P00000041 Salamanca ===
+  merged rows: 15352 | 1965-01-01 .. 2018-08-02
+  [P00000041 h=1d] Ridge              NSE=0.868 KGE=0.896 (0.0s)
+  [P00000041 h=1d] RandomForest       NSE=0.848 KGE=0.903 (1.1s)
+  [P00000041 h=1d] GradientBoosting   NSE=0.854 KGE=0.905 (4.3s)
+  [P00000041 h=1d] MLP                NSE=0.846 KGE=0.911 (0.8s)
+  [P00000041 h=1d] XGBoost            NSE=0.840 KGE=0.889 (0.4s)
+  [P00000041 h=7d] Ridge              NSE=0.566 KGE=0.684 (0.0s)
+  [P00000041 h=7d] RandomForest       NSE=0.381 KGE=0.711 (1.1s)
+  [P00000041 h=7d] GradientBoosting   NSE=0.491 KGE=0.725 (4.3s)
+  [P00000041 h=7d] MLP                NSE=0.503 KGE=0.742 (1.8s)
+  [P00000041 h=7d] XGBoost            NSE=0.439 KGE=0.721 (0.3s)
+
+=== P00000047 Egemsa Km 105 ===
+  merged rows: 14308 | 1985-01-01 .. 2024-12-31
+  [P00000047 h=1d] Ridge              NSE=0.902 KGE=0.935 (0.0s)
+  [P00000047 h=1d] RandomForest       NSE=0.904 KGE=0.942 (0.9s)
+  [P00000047 h=1d] GradientBoosting   NSE=0.900 KGE=0.936 (3.8s)
+  [P00000047 h=1d] MLP                NSE=0.906 KGE=0.934 (1.1s)
+  [P00000047 h=1d] XGBoost            NSE=0.896 KGE=0.935 (0.3s)
+  [P00000047 h=7d] Ridge              NSE=0.741 KGE=0.816 (0.0s)
+  [P00000047 h=7d] RandomForest       NSE=0.727 KGE=0.825 (1.0s)
+  [P00000047 h=7d] GradientBoosting   NSE=0.744 KGE=0.817 (3.9s)
+  [P00000047 h=7d] MLP                NSE=0.766 KGE=0.831 (2.0s)
+  [P00000047 h=7d] XGBoost            NSE=0.723 KGE=0.815 (0.4s)
+
+=== P00000027 Cahua ===
+  merged rows: 9131 | 2000-01-01 .. 2024-12-31
+  [P00000027 h=1d] Ridge              NSE=0.878 KGE=0.921 (0.0s)
+  [P00000027 h=1d] RandomForest       NSE=0.875 KGE=0.928 (0.6s)
+  [P00000027 h=1d] GradientBoosting   NSE=0.879 KGE=0.911 (2.1s)
+  [P00000027 h=1d] MLP                NSE=0.860 KGE=0.916 (0.4s)
+  [P00000027 h=1d] XGBoost            NSE=0.878 KGE=0.930 (0.4s)
+  [P00000027 h=7d] Ridge              NSE=0.736 KGE=0.831 (0.0s)
+  [P00000027 h=7d] RandomForest       NSE=0.743 KGE=0.841 (0.5s)
+  [P00000027 h=7d] GradientBoosting   NSE=0.746 KGE=0.833 (2.1s)
+  [P00000027 h=7d] MLP                NSE=0.747 KGE=0.822 (0.6s)
+  [P00000027 h=7d] XGBoost            NSE=0.728 KGE=0.844 (0.3s)
+
+=== P00000022 Recreta ===
+  merged rows: 7481 | 1953-01-01 .. 1974-09-02
+  [P00000022 h=1d] Ridge              NSE=0.865 KGE=0.873 (0.0s)
+  [P00000022 h=1d] RandomForest       NSE=0.860 KGE=0.900 (0.5s)
+  [P00000022 h=1d] GradientBoosting   NSE=0.854 KGE=0.883 (2.1s)
+  [P00000022 h=1d] MLP                NSE=0.875 KGE=0.911 (0.3s)
+  [P00000022 h=1d] XGBoost            NSE=0.838 KGE=0.884 (0.4s)
+  [P00000022 h=7d] Ridge              NSE=0.636 KGE=0.649 (0.0s)
+  [P00000022 h=7d] RandomForest       NSE=0.590 KGE=0.603 (0.6s)
+  [P00000022 h=7d] GradientBoosting   NSE=0.628 KGE=0.657 (1.9s)
+  [P00000022 h=7d] MLP                NSE=0.657 KGE=0.658 (0.3s)
+  [P00000022 h=7d] XGBoost            NSE=0.593 KGE=0.671 (0.4s)
+
+=== P00000021 Quitaracsa ===
+  merged rows: 6928 | 1952-09-01 .. 1974-09-02
+  [P00000021 h=1d] Ridge              NSE=0.706 KGE=0.780 (0.0s)
+  [P00000021 h=1d] RandomForest       NSE=0.694 KGE=0.780 (0.5s)
+  [P00000021 h=1d] GradientBoosting   NSE=0.543 KGE=0.757 (1.9s)
+  [P00000021 h=1d] MLP                NSE=0.707 KGE=0.784 (0.5s)
+  [P00000021 h=1d] XGBoost            NSE=0.627 KGE=0.690 (0.4s)
+  [P00000021 h=7d] Ridge              NSE=0.413 KGE=0.542 (0.0s)
+  [P00000021 h=7d] RandomForest       NSE=0.370 KGE=0.507 (0.6s)
+  [P00000021 h=7d] GradientBoosting   NSE=0.425 KGE=0.495 (1.9s)
+  [P00000021 h=7d] MLP                NSE=0.312 KGE=0.525 (1.1s)
+  [P00000021 h=7d] XGBoost            NSE=0.407 KGE=0.508 (0.4s)
+
+=== P00000005 Colcas ===
+  merged rows: 6796 | 1954-01-01 .. 1974-07-02
+  [P00000005 h=1d] Ridge              NSE=0.853 KGE=0.908 (0.0s)
+  [P00000005 h=1d] RandomForest       NSE=0.859 KGE=0.913 (0.5s)
+  [P00000005 h=1d] GradientBoosting   NSE=0.857 KGE=0.919 (1.8s)
+  [P00000005 h=1d] MLP                NSE=0.831 KGE=0.901 (0.6s)
+  [P00000005 h=1d] XGBoost            NSE=0.863 KGE=0.919 (0.3s)
+  [P00000005 h=7d] Ridge              NSE=0.629 KGE=0.748 (0.0s)
+  [P00000005 h=7d] RandomForest       NSE=0.631 KGE=0.778 (0.4s)
+  [P00000005 h=7d] GradientBoosting   NSE=0.629 KGE=0.784 (1.8s)
+  [P00000005 h=7d] MLP                NSE=0.508 KGE=0.716 (0.8s)
+  [P00000005 h=7d] XGBoost            NSE=0.583 KGE=0.771 (0.3s)
+
+=== P00000003 Chancos ===
+  merged rows: 6739 | 1953-08-01 .. 1974-09-02
+  [P00000003 h=1d] Ridge              NSE=0.805 KGE=0.848 (0.0s)
+  [P00000003 h=1d] RandomForest       NSE=0.730 KGE=0.708 (0.4s)
+  [P00000003 h=1d] GradientBoosting   NSE=0.734 KGE=0.707 (1.8s)
+  [P00000003 h=1d] MLP                NSE=0.745 KGE=0.826 (0.7s)
+  [P00000003 h=1d] XGBoost            NSE=0.722 KGE=0.692 (0.4s)
+  [P00000003 h=7d] Ridge              NSE=0.590 KGE=0.651 (0.0s)
+  [P00000003 h=7d] RandomForest       NSE=0.587 KGE=0.604 (0.5s)
+  [P00000003 h=7d] GradientBoosting   NSE=0.567 KGE=0.579 (1.9s)
+  [P00000003 h=7d] MLP                NSE=0.433 KGE=0.683 (1.0s)
+  [P00000003 h=7d] XGBoost            NSE=0.578 KGE=0.601 (0.4s)
+
+=== P00000016 Pachacoto ===
+  merged rows: 6701 | 1952-12-09 .. 1974-09-02
+  [P00000016 h=1d] Ridge              NSE=0.874 KGE=0.891 (0.0s)
+  [P00000016 h=1d] RandomForest       NSE=0.850 KGE=0.854 (0.5s)
+  [P00000016 h=1d] GradientBoosting   NSE=0.856 KGE=0.862 (1.8s)
+  [P00000016 h=1d] MLP                NSE=0.866 KGE=0.879 (0.3s)
+  [P00000016 h=1d] XGBoost            NSE=0.849 KGE=0.856 (0.3s)
+  [P00000016 h=7d] Ridge              NSE=0.651 KGE=0.696 (0.0s)
+  [P00000016 h=7d] RandomForest       NSE=0.610 KGE=0.639 (0.5s)
+  [P00000016 h=7d] GradientBoosting   NSE=0.637 KGE=0.660 (1.8s)
+  [P00000016 h=7d] MLP                NSE=0.607 KGE=0.652 (0.8s)
+  [P00000016 h=7d] XGBoost            NSE=0.584 KGE=0.653 (0.4s)
+
+=== P00000055 Puente Isla Cabanillas ===
+  merged rows: 6572 | 1994-07-16 .. 2024-12-31
+  [P00000055 h=1d] Ridge              NSE=0.847 KGE=0.895 (0.0s)
+  [P00000055 h=1d] RandomForest       NSE=0.858 KGE=0.905 (0.6s)
+  [P00000055 h=1d] GradientBoosting   NSE=0.869 KGE=0.896 (1.8s)
+  [P00000055 h=1d] MLP                NSE=0.871 KGE=0.912 (0.5s)
+  [P00000055 h=1d] XGBoost            NSE=0.866 KGE=0.901 (0.5s)
+  [P00000055 h=7d] Ridge              NSE=0.550 KGE=0.674 (0.0s)
+  [P00000055 h=7d] RandomForest       NSE=0.391 KGE=0.626 (0.6s)
+  [P00000055 h=7d] GradientBoosting   NSE=0.475 KGE=0.639 (1.7s)
+  [P00000055 h=7d] MLP                NSE=0.523 KGE=0.679 (0.6s)
+  [P00000055 h=7d] XGBoost            NSE=0.412 KGE=0.626 (0.4s)
+
+--- Walk-forward (expanding) on focus station ---
+  [WF fold 1 h=1] Ridge NSE=0.790 skill=-0.191 n_train=3270 n_test=1090
+  [WF fold 2 h=1] Ridge NSE=0.796 skill=-0.279 n_train=4360 n_test=1090
+  [WF fold 3 h=1] Ridge NSE=0.851 skill=-0.248 n_train=5450 n_test=1091
+  [WF fold 1 h=7] Ridge NSE=0.604 skill=0.136 n_train=3267 n_test=1089
+  [WF fold 2 h=7] Ridge NSE=0.448 skill=0.080 n_train=4356 n_test=1089
+  [WF fold 3 h=7] Ridge NSE=0.560 skill=0.085 n_train=5445 n_test=1090
+
+=== P00000011 Llanganuco ===
+  merged rows: 6398 | 1955-07-01 .. 1974-09-02
+  [P00000011 h=1d] Ridge              NSE=0.954 KGE=0.971 (0.0s)
+  [P00000011 h=1d] RandomForest       NSE=0.948 KGE=0.973 (0.4s)
+  [P00000011 h=1d] GradientBoosting   NSE=0.950 KGE=0.972 (1.6s)
+  [P00000011 h=1d] MLP                NSE=0.934 KGE=0.963 (0.5s)
+  [P00000011 h=1d] XGBoost            NSE=0.949 KGE=0.970 (0.4s)
+  [P00000011 h=7d] Ridge              NSE=0.862 KGE=0.910 (0.0s)
+  [P00000011 h=7d] RandomForest       NSE=0.851 KGE=0.909 (0.5s)
+  [P00000011 h=7d] GradientBoosting   NSE=0.860 KGE=0.924 (1.7s)
+  [P00000011 h=7d] MLP                NSE=0.813 KGE=0.876 (1.4s)
+  [P00000011 h=7d] XGBoost            NSE=0.863 KGE=0.911 (0.3s)
+
+=== P00000040 Ocoña ===
+  merged rows: 5701 | 1970-09-01 .. 2024-12-31
+  [P00000040 h=1d] Ridge              NSE=0.847 KGE=0.886 (0.0s)
+  [P00000040 h=1d] RandomForest       NSE=0.850 KGE=0.864 (0.4s)
+  [P00000040 h=1d] GradientBoosting   NSE=0.850 KGE=0.877 (1.2s)
+  [P00000040 h=1d] MLP                NSE=0.851 KGE=0.898 (0.5s)
+  [P00000040 h=1d] XGBoost            NSE=0.834 KGE=0.844 (0.4s)
+  [P00000040 h=7d] Ridge              NSE=0.633 KGE=0.673 (0.0s)
+  [P00000040 h=7d] RandomForest       NSE=0.606 KGE=0.592 (0.8s)
+  [P00000040 h=7d] GradientBoosting   NSE=0.573 KGE=0.591 (1.4s)
+  [P00000040 h=7d] MLP                NSE=0.673 KGE=0.684 (0.9s)
+  [P00000040 h=7d] XGBoost            NSE=0.579 KGE=0.628 (0.3s)
+
+Wrote /Users/dev/Research/Papers/10-paper-caudal-sequia-hidrologica-altiplano/04-resultados/tablas/metrics_by_station.csv (182 rows, 13 stations)
+Wrote /Users/dev/Research/Papers/10-paper-caudal-sequia-hidrologica-altiplano/04-resultados/tablas/metrics_walkforward_cabanillas.csv
+
+Generating figures (600 dpi PNG + PDF)...
+Wrote /Users/dev/Research/Papers/10-paper-caudal-sequia-hidrologica-altiplano/04-resultados/tablas/metrics_summary.md
+Done in 125.5s | stations=13

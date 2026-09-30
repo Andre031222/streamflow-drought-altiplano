@@ -1,0 +1,14 @@
+gauge_id,n,file,ok,error
+P00000031,27368.0,02-datos/crudos/openmeteo/precip_P00000031_la_capilla_daily.csv,True,
+P00000008,18750.0,02-datos/crudos/openmeteo/precip_P00000008_condorcerro_daily.csv,True,
+P00000041,19572.0,02-datos/crudos/openmeteo/precip_P00000041_salamanca_daily.csv,True,
+P00000047,14610.0,02-datos/crudos/openmeteo/precip_P00000047_egemsa_km_105_daily.csv,True,
+P00000027,9132.0,02-datos/crudos/openmeteo/precip_P00000027_cahua_daily.csv,True,
+P00000022,,,False,HTTP Error 429: Too Many Requests
+P00000021,,,False,HTTP Error 429: Too Many Requests
+P00000005,,,False,HTTP Error 429: Too Many Requests
+P00000003,,,False,HTTP Error 429: Too Many Requests
+P00000016,,,False,HTTP Error 429: Too Many Requests
+P00000055,,,False,HTTP Error 429: Too Many Requests
+P00000011,,,False,HTTP Error 429: Too Many Requests
+P00000040,,,False,HTTP Error 429: Too Many Requests

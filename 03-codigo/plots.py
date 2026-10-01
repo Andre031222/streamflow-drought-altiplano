@@ -125,6 +125,10 @@ def fig_focus_forecast(preds: pd.DataFrame, best: str, h: int) -> None:
     save(fig, f"fig02_focus_forecast_h{h}")
 
 
+ABBR = {"climatology": "Clim", "Ridge": "Ridge", "RandomForest": "RF", "HistGB": "HGB",
+        "XGBoost": "XGB", "MLP": "MLP", "XGBoost-log": "XGB-log"}
+
+
 def fig_skill_heatmap(met: pd.DataFrame, h: int) -> None:
     m = met[(met.horizon == h) & met.model.isin(["climatology"] + LEARNERS)]
     order = station_order(met)
@@ -132,24 +136,26 @@ def fig_skill_heatmap(met: pd.DataFrame, h: int) -> None:
     lo = m.pivot(index="gauge_id", columns="model", values="skill_lo").loc[order.gauge_id]
     piv = piv[["climatology"] + LEARNERS]
     lo = lo[piv.columns]
-    fig, ax = plt.subplots(figsize=(5.2, 5.0))
+    fig, ax = plt.subplots(figsize=(4.7, 4.6))
     vmax = 0.4
     sns.heatmap(piv.clip(-vmax, vmax), cmap=cmc.vik_r, center=0, vmin=-vmax, vmax=vmax, ax=ax,
-                annot=piv.round(2), fmt="", annot_kws={"fontsize": 6},
-                cbar_kws={"label": "RMSE skill vs persistence (clipped ±0.4)", "shrink": 0.7},
+                annot=piv.round(2), fmt="", annot_kws={"fontsize": 6.5},
+                cbar_kws={"label": "RMSE skill vs. persistence (clipped at ±0.4)", "shrink": 0.75},
                 linewidths=0.4, linecolor="white")
     for i, gid in enumerate(piv.index):
         for j, c in enumerate(piv.columns):
             if lo.loc[gid, c] > 0:
-                ax.add_patch(plt.Rectangle((j, i), 1, 1, fill=False, ec="black", lw=0.9))
-    ax.set_yticklabels([short(n) for n in order.gauge_name], rotation=0)
-    for lab, r in zip(ax.get_yticklabels(), order.region):
-        lab.set_color(REGION_COLORS[r]); lab.set_fontweight("bold")
-    ax.set_xticklabels(["Clim." if c == "climatology" else c for c in piv.columns], rotation=30, ha="right")
+                ax.add_patch(plt.Rectangle((j, i), 1, 1, fill=False, ec="black", lw=1.0))
+    ax.set_yticklabels([short(n) for n in order.gauge_name], rotation=0, fontsize=7)
+    ax.set_xticklabels([ABBR[c] for c in piv.columns], rotation=0, fontsize=7.5)
     ax.set_xlabel(""); ax.set_ylabel("")
-    handles = [mpl.patches.Patch(color=REGION_COLORS[r], label=r) for r in REGION_ORDER]
-    fig.legend(handles=handles, loc="lower center", ncol=3, bbox_to_anchor=(0.45, -0.03),
-               title="gauge label colour = region", title_fontsize=7)
+    y = 0
+    for r, lab in zip(REGION_ORDER, ["Altiplano", "Cordillera\nBlanca", "W/S\nAndes"]):
+        n = int((order.region == r).sum())
+        ax.axhline(y, color="black", lw=1.2)
+        ax.text(len(piv.columns) + 2.9, y + n / 2, lab, va="center", ha="left", fontsize=7,
+                fontweight="bold", clip_on=False)
+        y += n
     save(fig, f"fig03_skill_heatmap_h{h}")
 
 

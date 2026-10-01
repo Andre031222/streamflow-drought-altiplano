@@ -15,7 +15,7 @@
 - `focusTrainStart`: 1994-09-25
 - `focusNTestOne`: 943
 - `focusPersNseOne`: 0.902
-- `focusBestOne`: RandomForest
+- `focusBestOne`: random forest
 - `focusBestNseOne`: 0.922
 - `focusBestKgeOne`: 0.931
 - `focusBestSkillOne`: 0.110

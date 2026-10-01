@@ -36,7 +36,7 @@ LEARNERS = ["Ridge", "RandomForest", "HistGB", "XGBoost", "MLP", "XGBoost-log"]
 def style() -> None:
     sns.set_theme(context="paper", style="ticks")
     mpl.rcParams.update({
-        "font.family": "DejaVu Sans", "font.size": 8, "axes.titlesize": 8.5, "axes.labelsize": 8,
+        "font.family": "Arial", "font.size": 8, "axes.titlesize": 8.5, "axes.labelsize": 8,
         "xtick.labelsize": 7, "ytick.labelsize": 7, "legend.fontsize": 7, "legend.frameon": False,
         "axes.spines.top": False, "axes.spines.right": False, "axes.linewidth": 0.6,
         "savefig.dpi": 600, "savefig.bbox": "tight", "savefig.pad_inches": 0.03,
@@ -84,8 +84,8 @@ def fig_focus_hydrograph_ssi(ssi: pd.DataFrame, splits: dict) -> None:
                 va="top", color=col, fontsize=7, fontweight="bold")
     a1.set_ylabel("Q (m$^3$ s$^{-1}$)")
     a1.set_yscale("log")
-    a1.set_title(f"{cfg.FOCUS_STATION_NAME} ({cfg.FOCUS_STATION_ID}) — daily discharge and "
-                 "nonparametric SSI-30", loc="left")
+    a1.set_title("(a) Daily discharge", loc="left")
+    a2.set_title("(b) Nonparametric SSI-30", loc="left")
     s = d.ssi30.values
     a2.fill_between(d.date, 0, s, where=s >= 0, color=OKABE["blue"], lw=0, alpha=0.8)
     a2.fill_between(d.date, 0, s, where=s < 0, color=OKABE["vermillion"], lw=0, alpha=0.8)
@@ -147,7 +147,6 @@ def fig_skill_heatmap(met: pd.DataFrame, h: int) -> None:
         lab.set_color(REGION_COLORS[r]); lab.set_fontweight("bold")
     ax.set_xticklabels(["Clim." if c == "climatology" else c for c in piv.columns], rotation=30, ha="right")
     ax.set_xlabel(""); ax.set_ylabel("")
-    ax.set_title(f"Skill vs persistence at lead {h} d (boxed: 95% block-bootstrap CI > 0)", loc="left")
     handles = [mpl.patches.Patch(color=REGION_COLORS[r], label=r) for r in REGION_ORDER]
     fig.legend(handles=handles, loc="lower center", ncol=3, bbox_to_anchor=(0.45, -0.03),
                title="gauge label colour = region", title_fontsize=7)
@@ -183,8 +182,8 @@ def fig_drought(met: pd.DataFrame, h: int) -> None:
     order = order[order.gauge_id.isin(b.index)]
     fig, axes = plt.subplots(1, 2, figsize=(7.0, 3.6), sharey=True)
     y = np.arange(len(order))[::-1]
-    for ax, metric, lab in [(axes[0], "drought_CSI", "CSI (higher is better)"),
-                            (axes[1], "drought_FAR", "FAR (lower is better)")]:
+    for ax, metric, lab in [(axes[0], "drought_CSI", "(a) CSI (higher is better)"),
+                            (axes[1], "drought_FAR", "(b) FAR (lower is better)")]:
         pv, bv = p.loc[order.gauge_id, metric].values, b.loc[order.gauge_id, metric].values
         xv = xl.loc[order.gauge_id, metric].values
         for yi, a, c, r in zip(y, pv, bv, order.region):
@@ -200,8 +199,6 @@ def fig_drought(met: pd.DataFrame, h: int) -> None:
     axes[0].set_yticklabels([short(n) for n in order.gauge_name])
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper center", ncol=3, bbox_to_anchor=(0.55, 0.0))
-    fig.suptitle(f"Drought-day detection at lead {h} d (variable threshold, monthly Q20 of fit period)",
-                 x=0.02, ha="left", fontsize=8.5)
     save(fig, f"fig05_drought_detection_h{h}")
 
 

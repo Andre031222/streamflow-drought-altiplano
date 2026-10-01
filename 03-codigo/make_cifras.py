@@ -20,6 +20,10 @@ from plots import LEARNERS, REGION_ORDER, short, val_selected
 OUT = cfg.MANUSCRIPT
 
 
+PROSE = {"RandomForest": "random forest", "HistGB": "histogram gradient boosting",
+         "XGBoost": "XGBoost", "XGBoost-log": "XGBoost-log", "Ridge": "Ridge regression", "MLP": "MLP"}
+
+
 def f3(x) -> str:
     return "n/a" if pd.isna(x) else f"{x:.3f}".replace("-", "$-$")
 
@@ -66,7 +70,7 @@ def main() -> None:
         b = best[(best.gauge_id == fid) & (best.horizon == h)].iloc[0]
         mac[f"focusNTest{w}"] = str(int(fm.n_test.iloc[0]))
         mac[f"focusPersNse{w}"] = f3(fm.loc["persistence", "NSE"])
-        mac[f"focusBest{w}"] = b.model
+        mac[f"focusBest{w}"] = PROSE.get(b.model, b.model)
         mac[f"focusBestNse{w}"] = f3(b.NSE)
         mac[f"focusBestKge{w}"] = f3(b.KGE)
         mac[f"focusBestSkill{w}"] = f3(b.skill_vs_persistence)
@@ -90,7 +94,7 @@ def main() -> None:
         ridge = met[(met.model == "Ridge") & (met.horizon == h)]
         mac[f"nRidgePos{w}"] = str(int((ridge.skill_vs_persistence > 0).sum()))
     counts = best[best.horizon == 7].model.value_counts()
-    mac["mostSelected"] = counts.index[0]
+    mac["mostSelected"] = PROSE.get(counts.index[0], counts.index[0])
     mac["mostSelectedN"] = str(int(counts.iloc[0]))
     tgt = met[met.model.isin(LEARNERS) & (met.horizon == 7)].config.map(lambda c: json.loads(c).get("target"))
     mac["pctDeltaTarget"] = f"{100 * (tgt != 'level').mean():.0f}"

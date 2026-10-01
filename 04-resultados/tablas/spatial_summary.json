@@ -1,0 +1,27 @@
+{
+  "n_pairs": 104,
+  "n_gauges_pairs": 19,
+  "min_months": 60,
+  "corr_c": 0.34723391297802403,
+  "corr_d0_km": 581.7003042378931,
+  "corr_d0_ci": [
+    330.33108725707854,
+    1069.46792344543
+  ],
+  "spearman_rho_dist": -0.5555105089085672,
+  "spearman_p_dist": 9.320352188557313e-10,
+  "median_rho_same_region": 0.2776670060635047,
+  "median_rho_cross_region": 0.08750911671382525,
+  "n_same_region": 50,
+  "moran_I": 0.017848783832606744,
+  "moran_p": 0.3737,
+  "moran_expected": -0.05555555555555555,
+  "top_driver": {
+    "attribute": "frac_snow_ERA5",
+    "label": "Snow fraction",
+    "rho": -0.5704833997874109,
+    "p_perm": 0.0101,
+    "n": 19,
+    "p_holm": 0.0707
+  }
+}

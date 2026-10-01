@@ -1,0 +1,20 @@
+gauge_id,gauge_name,slug,country,region,gauge_lat,gauge_lon,basin_cenlat,basin_cenlon,basin_area,elev_mean,glacier_area_RGI60,days_w_data_qc,n_extracted,date_start,date_end,is_focus
+P00000031,La Capilla,la_capilla,Peru,Western/Southern Andes,-12.5219,-76.4964,-12.2439,-76.2059,2153.176,3539.1344,0.6678,18420,18420,1950-01-01,2024-12-05,False
+P00000008,Condorcerro,condorcerro,Peru,Western/Southern Andes,-8.65,-78.25,-8.9149,-77.7713,10617.5375,3650.7084,3.3095,17517,17517,1973-09-01,2024-12-31,False
+X01020002,Rio Desaguadero Cotacotani,rio_desaguadero_cotacotani,Chile,Altiplano,-18.1936,-69.2458,-18.2538,-69.1459,376.1001,4776.3729,1.7136,16165,16165,1964-12-07,2017-11-17,False
+X01001002,Rio Caquena En Vertedero,rio_caquena_en_vertedero,Chile,Altiplano,-17.9942,-69.255,-18.0675,-69.2396,467.5562,4650.3129,0.2925,15812,15812,1969-11-27,2024-12-31,False
+P00000041,Salamanca,salamanca,Peru,Western/Southern Andes,-15.5033,-72.8318,-15.3961,-72.6833,1108.4461,4717.3294,2.5296,15352,15352,1965-01-01,2018-08-02,False
+X01020003,Rio Lauca En Estancia El Lago,rio_lauca_en_estancia_el_lago,Chile,Altiplano,-18.2325,-69.3319,-18.2323,-69.2119,582.9384,4692.1855,1.1056,14474,14474,1953-04-06,2024-12-31,False
+P00000047,Egemsa Km 105,egemsa_km_105,Peru,Western/Southern Andes,-13.1831,-72.5336,-13.8275,-71.5368,9600.6916,4196.794,1.7739,14308,14308,1985-01-01,2024-12-31,False
+X01021001,Rio Lauca En Japu (O En El Limite),rio_lauca_en_japu_o_en_el_limite,Chile,Altiplano,-18.5833,-69.0467,-18.5186,-69.1951,3277.9809,4492.0238,0.319,13732,13732,1963-04-11,2022-01-02,False
+X01001003,Rio Colpacagua En Desembocadura,rio_colpacagua_en_desembocadura,Chile,Altiplano,-18.0156,-69.2308,-18.0615,-69.153,198.8082,4770.2217,0.6879,10181,10181,1988-06-16,2024-12-31,False
+P00000027,Cahua,cahua,Peru,Western/Southern Andes,-10.606,-77.3439,-10.3486,-77.0802,3387.9113,3846.1303,1.4515,9131,9131,2000-01-01,2024-12-31,False
+P00000022,Recreta,recreta,Peru,Cordillera Blanca,-10.0333,-77.3333,-10.0684,-77.2477,346.1517,4318.8976,1.7383,7481,7481,1953-01-01,1974-09-02,False
+X01001001,Rio Caquena En Nacimiento,rio_caquena_en_nacimiento,Chile,Altiplano,-18.0769,-69.1961,-18.1063,-69.1655,49.7119,4837.2043,1.6771,7350,7350,1976-07-21,2004-05-27,False
+P00000021,Quitaracsa,quitaracsa,Peru,Cordillera Blanca,-8.7884,-77.8454,-8.7613,-77.7072,388.374,4244.7704,5.4428,6928,6928,1952-09-01,1974-09-02,False
+P00000005,Colcas,colcas,Peru,Cordillera Blanca,-8.9167,-77.8333,-8.9244,-77.7077,239.1952,4308.9143,13.6195,6796,6796,1954-01-01,1974-07-02,False
+P00000003,Chancos,chancos,Peru,Cordillera Blanca,-9.3255,-77.5593,-9.3268,-77.438,218.364,4458.8733,17.1716,6739,6739,1953-08-01,1974-09-02,False
+P00000016,Pachacoto,pachacoto,Peru,Cordillera Blanca,-9.853,-77.4023,-9.8783,-77.2653,209.3256,4605.9697,5.0659,6701,6701,1952-12-09,1974-09-02,False
+P00000055,Puente Isla Cabanillas,puente_isla_cabanillas,Peru,Altiplano,-15.4721,-70.2244,-15.6015,-70.6777,2842.9998,4470.744,0.8883,6572,6572,1994-07-16,2024-12-31,True
+P00000011,Llanganuco,llanganuco,Peru,Cordillera Blanca,-9.0707,-77.64,-9.0496,-77.6146,81.8131,4843.0498,34.493,6398,6398,1955-07-01,1974-09-02,False
+P00000040,Ocoña,ocona,Peru,Western/Southern Andes,-16.4269,-73.1146,-15.2379,-73.0853,16016.9545,3761.2372,0.2198,5701,5701,1970-09-01,2024-12-31,False

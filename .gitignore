@@ -26,3 +26,16 @@ __pycache__/
 05-plantilla-springer/Manuscript_Guidelines.pdf
 05-plantilla-springer/T1-book.dot
 05-plantilla-springer/readme-T1-book.pdf
+
+# Scripts y proyectos QGIS de taller (no GitHub)
+03-codigo/local/
+
+# Large geodata for the map (re-downloadable; see 03-codigo/maps/make_fig00_qgis.py).
+# The small clipped Natural Earth layers in naturalearth/clip/ (~0.5 MB) stay tracked.
+02-datos/crudos/andean-gc/AndeanGC_shape.gpkg
+02-datos/crudos/andean-gc/AndeanGC_data_1950_2024.csv
+02-datos/crudos/naturalearth/ne_*/
+02-datos/crudos/dem/*.tif
+02-datos/crudos/dem/*.vrt
+02-datos/crudos/dem/*.aux.xml
+02-datos/crudos/dem/tiles/

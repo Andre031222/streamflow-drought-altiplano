@@ -39,3 +39,7 @@ __pycache__/
 02-datos/crudos/dem/*.vrt
 02-datos/crudos/dem/*.aux.xml
 02-datos/crudos/dem/tiles/
+
+# Private submission data (telephone) and the CMT submission PDF
+01-articulo/manuscrito/private.tex
+01-articulo/envio-cmt/

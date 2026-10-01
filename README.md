@@ -2,7 +2,7 @@
 
 **An open, leakage-free multi-station benchmark with an Altiplano focus**
 
-[![Venue](https://img.shields.io/badge/ICICCDS-2027-0F2444?style=flat-square)](https://cmt3.research.microsoft.com/ICICCDS2027)
+[![Proceedings](https://img.shields.io/badge/Conference%20proceedings-ICICCDS%202027-0F2444?style=flat-square)](https://cmt3.research.microsoft.com/ICICCDS2027)
 [![Data: Andean-GC](https://img.shields.io/badge/Data-Andean--GC%2010.5281%2Fzenodo.18035801-1565C0?style=flat-square&logo=zenodo&logoColor=white)](https://doi.org/10.5281/zenodo.18035801)
 [![License: MIT](https://img.shields.io/badge/License-MIT-337AB7?style=flat-square)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
@@ -10,7 +10,7 @@
 [![Tests](https://img.shields.io/badge/leakage%20tests-7%20passing-2E7D32?style=flat-square)](03-codigo/tests/test_pipeline.py)
 [![Skill](https://img.shields.io/badge/7--day%20skill%20%3E%200-18%2F19%20gauges-2E7D32?style=flat-square)](#key-results)
 
-Submitted to the *International Conference on Intelligent Computing, Communication and Data Science* (**ICICCDS 2027**), Springer proceedings format.
+**Conference proceedings contribution** (not a journal article), submitted to the *International Conference on Intelligent Computing, Communication and Data Science* (**ICICCDS 2027**) and prepared in the Springer proceedings format (SVMult). This repository contains the complete code, data extracts and results behind the contribution.
 
 ---
 
@@ -95,7 +95,7 @@ An earlier version of this pipeline was leaky and reported that persistence wins
 streamflow-drought-altiplano/
 ├── 00-gestion/                      # Project log, decisions, plan (Spanish)
 ├── 01-articulo/
-│   ├── caudal-sequia-altiplano.pdf  # Submission PDF
+│   ├── caudal-sequia-altiplano.pdf  # Proceedings manuscript (submission PDF)
 │   ├── 00-abstract.md               # Abstract (generated from the manuscript)
 │   └── manuscrito/                  # Springer SVMult source
 │       ├── caudal-sequia-altiplano.tex, results.tex, backmatter.tex
@@ -159,24 +159,11 @@ Set `export MPLBACKEND=Agg` on headless machines. Steps 1–2 are needed only to
 
 ## Authors
 
-Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru.
-
-| Author | Role | ORCID |
-|--------|------|-------|
-| **Richar Andre Vilca-Solorzano** \* | Lead author: conceptualization, full pipeline, data fusion, analysis, QGIS maps, writing | [0009-0003-2385-5263](https://orcid.org/0009-0003-2385-5263) |
-| **Dina Maribel Yana-Yucra** | Conceptualization, methodology, drought and spatial analysis, validation, writing | [0009-0003-6218-2735](https://orcid.org/0009-0003-6218-2735) |
-| **Renato Quispe-Vargas** | Validation, review | [0009-0005-2367-7852](https://orcid.org/0009-0005-2367-7852) |
-
+**Richar Andre Vilca-Solorzano**\* ([0009-0003-2385-5263](https://orcid.org/0009-0003-2385-5263)) · **Dina Maribel Yana-Yucra** ([0009-0003-6218-2735](https://orcid.org/0009-0003-6218-2735)) · **Renato Quispe-Vargas** ([0009-0005-2367-7852](https://orcid.org/0009-0005-2367-7852))
+Faculty of Statistical and Computer Engineering, Universidad Nacional del Altiplano (UNAP), Puno, Peru.
 <sub>\* Corresponding author: <75521963@est.unap.edu.pe></sub>
 
-<details>
-<summary><b>CRediT contribution statement</b></summary>
-
-- **R. A. Vilca-Solorzano**: Conceptualization; Methodology; Software; Data curation; Formal analysis; Investigation; Visualization; Project administration; Writing – original draft; Writing – review & editing.
-- **D. M. Yana-Yucra**: Conceptualization; Methodology; Formal analysis; Investigation; Validation; Visualization; Writing – original draft; Writing – review & editing.
-- **R. Quispe-Vargas**: Validation; Writing – review & editing.
-
-</details>
+R. A. Vilca-Solorzano conceived the study, developed the software and analysis, and wrote the manuscript. D. M. Yana-Yucra contributed to the methodology, analysis and writing. R. Quispe-Vargas validated the results.
 
 ---
 
@@ -189,7 +176,7 @@ Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional d
                An Open, Leakage-Free Multi-Station Benchmark with an Altiplano Focus},
   booktitle = {International Conference on Intelligent Computing, Communication and Data Science (ICICCDS 2027)},
   year      = {2027},
-  note      = {Submitted},
+  note      = {Conference proceedings contribution, submitted},
   url       = {https://github.com/Andre031222/streamflow-drought-altiplano}
 }
 ```

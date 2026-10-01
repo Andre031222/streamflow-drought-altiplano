@@ -84,15 +84,6 @@ Hydrological drought is spatially coherent but local (Figs.~\ref{fig:spatialmap}
 
 \textbf{Limitations.} ERA5 at 0.25$^\circ$ is coarse for steep catchments and has a wet bias over the Andes. The Cordillera Blanca records predate 1975, so no MERRA-2 or GloFAS data overlap them. The fusion ablation therefore covers \nFusion{} gauges only, and some GloFAS requests were rate-limited. The validation block is a single period, so selection can be unstable under non-stationarity (e.g., glacier retreat). Forecasts use observed rather than forecast forcing beyond $t$, which is acceptable here because predictors stop at $t$; skill against operational meteorological forecasts is left for future work.
 
-\section{Open Repository and Reproducibility}
-\label{sec:repo}
-
-The complete study is released as an open, version-controlled repository:
-\begin{center}
-{\small\texttt{https://github.com/Andre031222/streamflow-drought-altiplano}}
-\end{center}
-It is organized as a numbered pipeline. \texttt{02-datos/} holds the gauge extracts, the ERA5, MERRA-2 and GloFAS caches with fetch manifests, and a provenance inventory. \texttt{03-codigo/} holds the Python pipeline: retrieval, features, models, uncertainty, drought scores and spatial statistics. It also includes the automated leakage tests (calendar offsets, absence of future information, embargo) and the PyQGIS map scripts with their QGIS project. \texttt{04-resultados/} holds every table and figure, and \texttt{01-articulo/} the Springer source. Every number and table in this paper is written by a script (\texttt{make\_cifras.py}) from the result tables, so text and results cannot drift apart. The full benchmark reruns in about \runtimeMin{}~min on a laptop CPU. The repository also provides material omitted here for space: test-period forecast traces, the per-gauge data-fusion ablation and the walk-forward fold scores.
-
 \section{Conclusion}
 \label{sec:conclusion}
 

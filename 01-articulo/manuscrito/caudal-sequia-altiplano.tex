@@ -18,7 +18,8 @@
 \input{cifras.tex}
 % Telephone of the corresponding author (required by Springer, not published).
 \newcommand{\phoneAndre}{}
-\newcommand{\phoneLine}{\ifx\phoneAndre\empty\else, Tel.: \phoneAndre\fi}
+\InputIfFileExists{private.tex}{}{}% private.tex (git-ignored) sets \phoneAndre for the CMT submission only
+\newcommand{\phoneLine}{\ifx\phoneAndre\empty\else,\\ \hphantom{\textbf{Corresponding author:}} Tel.:~\mbox{\phoneAndre}\fi}
 \makeatletter
 \newcommand{\inputtable}[1]{\@@input #1 }% primitive input: safe inside tabular
 \makeatother
@@ -58,7 +59,7 @@ This paper contributes an open, laptop-scale benchmark for the Peruvian Andes an
 \item report skill against persistence with moving-block bootstrap intervals \cite{kunsch1989block} and Diebold--Mariano tests \cite{diebold1995dm,harvey1997dm}, at 1-, 3- and 7-day leads;
 \item evaluate drought detection directly, using the variable-threshold level method \cite{vanloon2015explained,fleig2006threshold} and categorical scores \cite{schaefer1990csi}, and release a nonparametric standardized streamflow index (SSI) \cite{farahmand2015nonparametric}.
 \end{enumerate}
-The paper is organized as follows. Section~\ref{sec:related} reviews related work, Sect.~\ref{sec:data} describes the data and Sect.~\ref{sec:methods} the methods. Section~\ref{sec:results} presents the results, Sect.~\ref{sec:discussion} discusses them, and Sect.~\ref{sec:repo} documents the open repository (\url{\githubUrl}).
+The paper is organized as follows. Section~\ref{sec:related} reviews related work, Sect.~\ref{sec:data} describes the data and Sect.~\ref{sec:methods} the methods. Section~\ref{sec:results} presents the results, Sect.~\ref{sec:discussion} discusses them and Sect.~\ref{sec:conclusion} concludes.
 
 \section{Related Work}
 \label{sec:related}
@@ -119,7 +120,7 @@ ID & Gauge & Cty & Region & Area & Record & QC days & $n_{\mathrm{test}}$ \\
 
 \textbf{Spatial statistics.} Spatial drought coherence is quantified as the Spearman correlation of monthly SSI-30 between every gauge pair with at least 60 overlapping months, as a function of great-circle distance $d$. We fit the exponential correlogram $\rho(d)=c\,e^{-d/d_0}$, in the spirit of space--time drought analysis \cite{tallaksen2009spacetime}. Pairs share gauges and are therefore not independent, so the 95\% interval of the decorrelation distance $d_0$ comes from a gauge-level bootstrap (500 replicates). Spatial clustering of the 7-day skill is tested with global Moran's $I$ \cite{moran1950}, using inverse-distance weights and 9999 permutations. Candidate drivers of skill are Andean-GC catchment attributes (area, mean elevation, glacier fraction, aridity, precipitation concentration, snow fraction and dry-day frequency). They are screened with Spearman correlations, permutation $p$-values and a Holm correction for multiple testing. The skill map and the drought-synchrony network are rendered in QGIS.
 
-The whole pipeline runs on a laptop CPU (10 cores, about \runtimeMin{}~min). Every number in this paper is written automatically from the result tables.
+The whole pipeline runs on a laptop CPU (10 cores, about \runtimeMin{}~min), and every number in this paper is written automatically from the result tables, so text and results cannot drift apart.
 
 \input{results.tex}
 

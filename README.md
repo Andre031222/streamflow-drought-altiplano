@@ -1,6 +1,6 @@
-# Honest Baselines for Streamflow and Hydrological-Drought Forecasting in the Tropical Andes
+# When Machine Learning Beats Persistence
 
-**An open, leakage-free multi-station benchmark with an Altiplano focus**
+**A leakage-free streamflow and drought benchmark for the Tropical Andes**
 
 [![Proceedings](https://img.shields.io/badge/Conference%20proceedings-ICICCDS%202027-0F2444?style=flat-square)](https://cmt3.research.microsoft.com/ICICCDS2027)
 [![Data: Andean-GC](https://img.shields.io/badge/Data-Andean--GC%2010.5281%2Fzenodo.18035801-1565C0?style=flat-square&logo=zenodo&logoColor=white)](https://doi.org/10.5281/zenodo.18035801)
@@ -95,10 +95,12 @@ An earlier version of this pipeline was leaky and reported that persistence wins
 streamflow-drought-altiplano/
 ├── 00-gestion/                      # Project log, decisions, plan (Spanish)
 ├── 01-articulo/
-│   ├── caudal-sequia-altiplano.pdf  # Proceedings manuscript (submission PDF)
+│   ├── caudal-sequia-altiplano_8p.pdf  # Proceedings version (8 pages, submitted)
+│   ├── caudal-sequia-altiplano.pdf     # Extended version (16 pages)
 │   ├── 00-abstract.md               # Abstract (generated from the manuscript)
 │   └── manuscrito/                  # Springer SVMult source
-│       ├── caudal-sequia-altiplano.tex, results.tex, backmatter.tex
+│       ├── caudal-sequia-altiplano_8p.tex                          # 8-page proceedings version
+│       ├── caudal-sequia-altiplano.tex, results.tex, backmatter.tex  # extended version
 │       ├── cifras.tex, tab_*.tex    # AUTO-GENERATED numbers and tables (make_cifras.py)
 │       ├── references.bib           # 58 cited references, DOIs verified on Crossref/DataCite
 │       └── references_verification.md
@@ -151,7 +153,7 @@ The maps need **QGIS 4.2**. The scripts relaunch themselves with the Python bund
 | 5 | `python 03-codigo/spatial_analysis.py` | Correlogram, Moran's *I*, skill drivers | ≈ 1 min |
 | 6 | `python 03-codigo/make_cifras.py` | Writes `cifras.tex` and `tab_*.tex` for the manuscript | seconds |
 | 7 | `python 03-codigo/maps/make_fig00_qgis.py`<br>`python 03-codigo/maps/make_fig08_spatial_qgis.py` | QGIS maps | ≈ 1 min each |
-| 8 | `pdflatex` → `bibtex` → `pdflatex` ×2 in `01-articulo/manuscrito/` | Builds the paper | seconds |
+| 8 | `pdflatex` → `bibtex` → `pdflatex` ×2 on `caudal-sequia-altiplano_8p.tex` (or the extended `caudal-sequia-altiplano.tex`) | Builds the paper | seconds |
 
 Set `export MPLBACKEND=Agg` on headless machines. Steps 1–2 are needed only to rebuild the data from scratch, because the extracts and caches are already in the repository.
 
@@ -172,8 +174,8 @@ R. A. Vilca-Solorzano conceived the study, developed the software and analysis, 
 ```bibtex
 @inproceedings{VilcaSolorzano2027Andes,
   author    = {Vilca-Solorzano, Richar Andre and Yana-Yucra, Dina Maribel and Quispe-Vargas, Renato},
-  title     = {Honest Baselines for Streamflow and Hydrological-Drought Forecasting in the Tropical Andes:
-               An Open, Leakage-Free Multi-Station Benchmark with an Altiplano Focus},
+  title     = {When Machine Learning Beats Persistence: A Leakage-Free Streamflow and Drought
+               Benchmark for the Tropical Andes},
   booktitle = {International Conference on Intelligent Computing, Communication and Data Science (ICICCDS 2027)},
   year      = {2027},
   note      = {Conference proceedings contribution, submitted},

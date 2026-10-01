@@ -1,0 +1,154 @@
+\documentclass[graybox]{svmult}
+
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage{type1cm}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cite}
+\usepackage[bottom]{footmisc}
+\usepackage{microtype}
+
+\input{cifras.tex}
+\newcommand{\phoneAndre}{}
+\InputIfFileExists{private.tex}{}{}
+\newcommand{\phoneLine}{\ifx\phoneAndre\empty\else, Tel.:~\mbox{\phoneAndre}\fi}
+\makeatletter
+\newcommand{\inputtable}[1]{\@@input #1 }
+\makeatother
+
+\hypersetup{
+  pdftitle={When Machine Learning Beats Persistence: A Leakage-Free Streamflow and Drought Benchmark for the Tropical Andes},
+  pdfauthor={Richar Andre Vilca-Solorzano; Dina Maribel Yana-Yucra; Renato Quispe-Vargas},
+  pdfkeywords={Tropical Andes, Altiplano, Streamflow forecasting, Hydrological drought, Machine learning, Data leakage, Benchmark}}
+
+\begin{document}
+
+\title*{When Machine Learning Beats Persistence: A Leakage-Free Streamflow and Drought Benchmark for the Tropical Andes}
+\titlerunning{Leakage-Free Andean Streamflow--Drought Benchmark}
+\author{Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra and Renato Quispe-Vargas}
+\authorrunning{R. A. Vilca-Solorzano et al.}
+\maketitle
+
+\vspace*{-26mm}
+\noindent{\small Faculty of Statistical and Computer Engineering, Universidad Nacional del Altiplano, Av.~Floral 1153, Puno 21001, Peru\\[2pt]
+\textbf{Corresponding author:} R.\,A. Vilca-Solorzano, \href{mailto:\emailAndre}{\emailAndre}\phoneLine\\
+D.\,M. Yana-Yucra, \href{mailto:\emailMaribel}{\emailMaribel}; R. Quispe-Vargas, \href{mailto:\emailRenato}{\emailRenato}\\[2pt]
+ORCID: \orcidAndre{}, \orcidMaribel{}, \orcidRenato{}}
+\par\medskip
+
+\abstract*{Reported machine-learning gains in Andean streamflow forecasting are often inflated by evaluation leakage. We publish an open benchmark of \nGauges{} long-record gauges from the Andean Glacierized Catchment dataset: \nGaugesAlti{} on the Altiplano, including Puente Isla Cabanillas in the Lake Titicaca basin, \nGaugesCB{} in the Cordillera Blanca and \nGaugesWSA{} in the western and southern Andes. The gauges are combined with ERA5 and MERRA-2 forcing and GloFAS~v4 simulated discharge. Persistence and climatology are compared with six learners at 1-, 3- and 7-day leads. The protocol is calendar-continuous, embargoed and validation-tuned, with block-bootstrap confidence intervals, Diebold--Mariano tests and walk-forward refits. The learners beat persistence at \nPosOne{} of \nGauges{} gauges at one day and at \nPosSeven{} of \nGauges{} at seven days (median skill \medSkillSeven{}). At Cabanillas the one-day skill is \focusBestSkillOne{} (95\% confidence interval \focusBestLoOne--\focusBestHiOne), the opposite of what an earlier leaky pipeline reported. Yet a lower root-mean-square error does not improve the detection of drought days: the median critical success index is \medCsiPers{} for persistence and \medCsiBest{} for the learners. Hydrological drought decorrelates over a few hundred kilometres, and skill follows hydroclimatic regime rather than geography, so dense gauge networks matter more than distant proxies.}
+
+\abstract{Reported machine-learning gains in Andean streamflow forecasting are often inflated by evaluation leakage. We publish an open benchmark of \nGauges{} long-record gauges from the Andean Glacierized Catchment dataset: \nGaugesAlti{} on the Altiplano, including Puente Isla Cabanillas in the Lake Titicaca basin, \nGaugesCB{} in the Cordillera Blanca and \nGaugesWSA{} in the western and southern Andes. The gauges are combined with ERA5 and MERRA-2 forcing and GloFAS~v4 simulated discharge. Persistence and climatology are compared with six learners at 1-, 3- and 7-day leads. The protocol is calendar-continuous, embargoed and validation-tuned, with block-bootstrap confidence intervals, Diebold--Mariano tests and walk-forward refits. The learners beat persistence at \nPosOne{} of \nGauges{} gauges at one day and at \nPosSeven{} of \nGauges{} at seven days (median skill \medSkillSeven{}). At Cabanillas the one-day skill is \focusBestSkillOne{} (95\% confidence interval \focusBestLoOne--\focusBestHiOne), the opposite of what an earlier leaky pipeline reported. Yet a lower root-mean-square error does not improve the detection of drought days: the median critical success index is \medCsiPers{} for persistence and \medCsiBest{} for the learners. Hydrological drought decorrelates over a few hundred kilometres, and skill follows hydroclimatic regime rather than geography, so dense gauge networks matter more than distant proxies.
+\keywords{Tropical Andes $\cdot$ Altiplano $\cdot$ Streamflow forecasting $\cdot$ Hydrological drought $\cdot$ Machine learning $\cdot$ Data leakage $\cdot$ Benchmark}}
+
+\section{Introduction}
+\label{sec:intro}
+
+Andean rivers supply irrigation, hydropower and drinking water, yet they follow an extreme seasonal cycle, retreating glaciers and recurrent drought \cite{vuille2018andes}. On the Altiplano, rivers such as the Coata--Cabanillas feed Lake Titicaca and depend on a short austral-summer wet season \cite{garreaud2003altiplano}. Hydrological droughts there are projected to grow longer and more frequent \cite{zubieta2021titicaca}. Short-range discharge forecasts and early drought signals are therefore valuable, but gauges are sparse and records are gappy.
+
+Machine learning (ML) is widely used for streamflow forecasting \cite{kratzert2018lstm,nearing2021role}. Daily discharge, however, is so autocorrelated that persistence ($\hat{Q}_{t+h}=Q_t$) is a demanding benchmark \cite{pappenberger2015benchmarks}. Reported gains are inflated by weak references, by shuffled cross-validation that leaks temporal information \cite{bergmeir2012cv,torres2026blockedcv}, and by implementations that give baselines and learners different information when the forecast is issued. An earlier version of our own pipeline did exactly this: the learners saw discharge only up to $t-1$ while persistence used $Q_t$, and data gaps were treated as consecutive days. Fixing both reversed its one-day conclusion.
+
+We contribute (i) an open benchmark of \nGauges{} Andean gauges in three hydroclimatic regions; (ii) a leakage-free protocol with automated tests; (iii) skill against persistence, with uncertainty, at 1-, 3- and 7-day leads; (iv) a direct evaluation of drought-day detection; and (v) spatial statistics of drought synchrony and forecast skill.
+
+\section{Related Work}
+\label{sec:related}
+
+Data-driven runoff forecasting in the Andes includes random forests in Ecuadorian catchments \cite{munoz2018rf}, neural networks for monthly flows in the Crisnejas basin \cite{ramos2023crisnejas} and $k$-nearest neighbors for daily Ramis flows on the Altiplano \cite{quispe2023ramis}. On the Altiplano, gridded forcing performs well against gauges but can still degrade simulated streamflow \cite{lujano2025gridded}. These studies usually evaluate one basin at one lead time, without a persistence reference or uncertainty. Our earlier Altiplano frost benchmark used the same comparative design as this study \cite{torres2025frost}. Hydrological drought is identified with threshold-level methods or standardized indices \cite{vanloon2015explained}, and forecasting it requires an explicit identification step \cite{sutanto2021definitions}. We therefore score drought days directly instead of inferring them from the discharge error.
+
+\section{Data and Methods}
+\label{sec:methods}
+
+\textbf{Data.} We use quality-controlled (QC) daily discharge from Andean-GC \cite{aguayo2026andeangc}. We keep every Peruvian gauge (SENAMHI) and every Chilean Altiplano gauge (DGA) with at least 5000 QC days. This gives \nGauges{} gauges: \nGaugesAlti{} on the Altiplano, \nGaugesCB{} glacier-fed Cordillera Blanca gauges with 1952--1974 records, and \nGaugesWSA{} in the western and southern Andes (Fig.~\ref{fig:map}). Daily precipitation and temperature come from the ERA5 reanalysis \cite{hersbach2020era5} at each catchment centroid, via Open-Meteo \cite{openmeteo}. A second precipitation source is NASA POWER (MERRA-2). Simulated discharge comes from the Global Flood Awareness System (GloFAS)~v4; among a $3\times3$ neighborhood, we use the cell that fits best over the fitting period only.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.66\textwidth]{figuras/fig00_station_map.pdf}
+\caption{The \nGauges{} gauges and their catchments by region. The Altiplano focus gauge, Puente Isla Cabanillas, is highlighted (QGIS; relief from Copernicus GLO-90).}
+\label{fig:map}
+\end{figure}
+
+\textbf{Forecasts and learners.} A forecast issued on day $t$ predicts $Q_{t+h}$, $h\in\{1,3,7\}$, from \nFeatures{} predictors available at $t$. These are discharge lags (including $Q_t$), rolling statistics, precipitation lags and totals, temperature, and the day of year. All operations use a daily calendar index, and samples that touch a gap are dropped. The references are persistence and a day-of-year climatology. We compare six learners: Ridge, random forest, histogram gradient boosting, XGBoost, a multilayer perceptron (MLP), and an XGBoost trained on the change in $\log(1+Q)$ (XGBoost-log).
+
+\textbf{Protocol.} Each record is split chronologically into 70/15/15\% train/validation/test blocks, with an $h$-day embargo between blocks. Hyper-parameters and the target form (level or change) are selected on the validation root-mean-square error (RMSE). The model is then refit on train plus validation and scored once on test. The learner of each gauge is the one with the lowest validation error, so the test set never selects models. A three-fold expanding walk-forward is run for Ridge at every gauge. Automated tests check calendar offsets, the absence of future information and the embargo.
+
+\textbf{Scores.} We report the Nash--Sutcliffe efficiency (NSE) \cite{nash1970} and the skill $S=1-\mathrm{RMSE}_{\mathrm{model}}/\mathrm{RMSE}_{\mathrm{pers}}$. Its 95\% confidence intervals (CIs) come from a moving-block bootstrap \cite{kunsch1989block}, and equal accuracy is tested with Diebold--Mariano (DM) tests \cite{diebold1995dm}. A day is in drought when $Q$ falls below the monthly 20th percentile of the fitting period \cite{vanloon2015explained}. Detection is scored with the probability of detection (POD), false-alarm ratio (FAR) and critical success index (CSI) \cite{schaefer1990csi}. A nonparametric 30-day standardized streamflow index (SSI-30) \cite{farahmand2015nonparametric} supports the spatial analysis.
+
+\textbf{Spatial statistics.} We fit an exponential correlogram $\rho(d)=c\,e^{-d/d_0}$ to the correlation of monthly SSI-30 between gauge pairs \cite{tallaksen2009spacetime}, with a gauge-level bootstrap CI for $d_0$. Clustering of skill is tested with Moran's $I$ \cite{moran1950}. Catchment attributes are screened as drivers of skill with permutation tests and a Holm correction.
+
+\section{Results}
+\label{sec:results}
+
+\textbf{Focus gauge.} At Cabanillas (Table~\ref{tab:focus}; test period \focusTestStart{} to \focusTestEnd{}), the validation-selected \focusBestOne{} reaches NSE~$=$~\focusBestNseOne{} at one day, versus \focusPersNseOne{} for persistence (skill \focusBestSkillOne{}; DM $p$~\focusBestDmpOne{}). At seven days persistence falls to NSE~$=$~\focusPersNseSeven{}. Ridge on the change target gives the most robust gain (skill \focusRidgeSkillSeven{}), which the walk-forward folds confirm (\wfFocusSkills{}). The MLP has the best one-day skill but a low CSI, a first sign that error skill and drought skill diverge.
+
+\begin{table}[t]
+\centering
+\caption{Test scores at Puente Isla Cabanillas. Skill is relative to persistence, with 95\% CI. $^\dagger$Learner selected on validation. CSI: drought-day detection at seven days.}
+\label{tab:focus}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrcrcr}
+\toprule
+& \multicolumn{2}{c}{1-day lead} & \multicolumn{2}{c}{7-day lead} & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Method & NSE & Skill [95\% CI] & NSE & Skill [95\% CI] & CSI \\
+\midrule
+\inputtable{tab_focus_compact.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{All gauges.} The validation-selected learner beats persistence at \nPosOne{}/\nGauges{}, \nPosThree{}/\nGauges{} and \nPosSeven{}/\nGauges{} gauges at 1, 3 and 7 days. Its CI excludes zero at \nSigOne{}, \nSigThree{} and \nSigSeven{} gauges, respectively (Fig.~\ref{fig:heatmap}). Median skill grows with lead time, from \medSkillOne{} to \medSkillSeven{}. It rises steeply in the Cordillera Blanca (\medSkillCBOne{} to \medSkillCBSeven{}) and in the western and southern Andes (\medSkillWSAOne{} to \medSkillWSASeven{}), but stays flat on the Altiplano (\medSkillAltiOne{} to \medSkillAltiSeven{}). Ridge alone is skillful at \nRidgePosSeven{}/\nGauges{} gauges at seven days, and \wfNPos{} of \wfNFolds{} walk-forward folds have positive skill (median \wfMedSkill{}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.68\textwidth]{figuras/fig03_skill_heatmap_h7.pdf}
+\caption{Seven-day skill against persistence for each gauge and method. Boxed cells have a 95\% bootstrap CI above zero.}
+\label{fig:heatmap}
+\end{figure}
+
+\textbf{Drought detection.} Lower RMSE does not mean better drought detection (Fig.~\ref{fig:drought}). At seven days the median CSI is \medCsiPers{} for persistence and \medCsiBest{} for the learners, which win at only \nCsiBestBeats{}/\nGauges{} gauges. XGBoost-log narrows the gap only slightly (median CSI \medCsiXgbLog{}). The learners raise fewer false alarms (median FAR \medFarBest{} vs.\ \medFarPers{}) but miss more drought days (POD \medPodBest{} vs.\ \medPodPers{}). Error-minimizing models regress towards the mean and smooth the recession limb, which is where the threshold lies.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/fig05_drought_detection_h7.pdf}
+\caption{Seven-day drought-day detection: (a) CSI and (b) FAR for persistence, the validation-selected learner and XGBoost-log.}
+\label{fig:drought}
+\end{figure}
+
+\textbf{Data fusion.} At the \nFusion{} gauges where MERRA-2 and GloFAS overlap the record, adding them changes median seven-day skill by \fusionMedDeltaRidge{} for Ridge and \fusionMedDeltaXGBoost{} for XGBoost. The raw GloFAS simulation reaches a median NSE of only \glofasMedNse{}. In these steep catchments, recent observed discharge carries more information than a global model.
+
+\textbf{Spatial statistics.} Drought synchrony decays with distance (Spearman \rhoDist{}, $p$~\pDist{}), with $d_0=\corrDzero$~km (95\% CI \corrDzeroLo--\corrDzeroHi~km). Pairs within the same region correlate more strongly than pairs across regions (median $\rho$ \rhoSameRegion{} vs.\ \rhoCrossRegion{}; Fig.~\ref{fig:spatial}b). Skill shows no spatial clustering (Moran's $I=\moranI$, $p=\moranP$; Fig.~\ref{fig:spatial}a). Instead, it decreases with snow fraction ($\rho=\topDriverRho$, $p=\topDriverP$; Holm-adjusted $p=\topDriverPholm$), precipitation concentration and aridity, which together describe the regime of the Altiplano headwaters.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figuras/fig08_spatial_skill_synchrony.pdf}
+\caption{(a) Seven-day skill by catchment; a bold outline marks a CI above zero. (b) Drought-synchrony network of monthly SSI-30 correlations between gauge pairs.}
+\label{fig:spatial}
+\end{figure}
+
+\section{Discussion and Conclusion}
+\label{sec:discussion}
+
+The evaluation protocol, not the model family, drove the largest change in our conclusions. Giving persistence and the learners the same information at issue time, and indexing on the calendar, turned a reported one-day loss into a significant gain. The gains are modest, a median RMSE reduction of 5--10\%, but consistent across gauges, leads and walk-forward folds. The Altiplano is the hardest region: its short convective pulses and long recessions are only partly resolved by a 0.25$^\circ$ reanalysis \cite{garreaud2003altiplano,lujano2025gridded}.
+
+Drought is a different target. Early warning should be trained or calibrated on the drought decision itself, for example with quantile or classification losses, and verified with categorical scores \cite{sutanto2021definitions}. Its limited spatial coherence calls for dense gauge networks \cite{zubieta2021titicaca}.
+
+\textbf{Limitations.} ERA5 is coarse for steep catchments. The Cordillera Blanca records predate MERRA-2 and GloFAS, so the fusion test covers only \nFusion{} gauges. A single validation block can be unstable under non-stationarity. Predictors use observed forcing up to $t$, not operational weather forecasts.
+
+In summary, under an honest protocol ML beats persistence at \nPosSeven{}/\nGauges{} Andean gauges at seven days, and also at one day at Cabanillas. These gains, however, do not carry over to drought-day detection. Future work will add drought-aware losses, operational forecast forcing, and more Altiplano gauges from SENAMHI and the National Water Authority (ANA).
+
+\section*{Declarations}
+\noindent\textbf{Data and code availability.} Discharge data are from Andean-GC \cite{aguayo2026andeangc}. Code, data, leakage tests, QGIS scripts, result tables and supplementary figures are public at {\small\url{\githubUrl}}.
+\textbf{Author contributions.} R.\,A. Vilca-Solorzano conceived the study, developed the software and analysis, and wrote the manuscript. D.\,M. Yana-Yucra contributed to the methodology, analysis and writing. R. Quispe-Vargas validated the results and revised the manuscript. \textbf{Competing interests.} None declared. \textbf{Acknowledgements.} We thank Andean-GC, SENAMHI, DGA, Copernicus/ECMWF, NASA POWER and Open-Meteo for open data.
+
+\bibliographystyle{spmpsci}
+\bibliography{references}
+
+\end{document}

@@ -27,11 +27,11 @@
 \author{Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra and Renato Quispe-Vargas}
 \authorrunning{R. A. Vilca-Solorzano, D. M. Yana-Yucra and R. Quispe-Vargas}
 \institute{Richar Andre Vilca-Solorzano (corresponding author) \at
-Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru\\ \email{\emailAndre{}} --- ORCID: \orcidAndre{}
+Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru\\ \email{\emailAndre} --- ORCID: \orcidAndre{}
 \and Dina Maribel Yana-Yucra \at
-Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru\\ \email{\emailMaribel{}} --- ORCID: \orcidMaribel{}
+Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru\\ \email{\emailMaribel} --- ORCID: \orcidMaribel{}
 \and Renato Quispe-Vargas \at
-Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru\\ \email{\emailRenato{}} --- ORCID: \orcidRenato{}}
+Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru\\ \email{\emailRenato} --- ORCID: \orcidRenato{}}
 
 \maketitle
 
@@ -43,27 +43,34 @@ Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional d
 \section{Introduction}
 \label{sec:intro}
 
-Streamflow in the tropical Andes sustains irrigation, hydropower and drinking water for millions of people, yet it is shaped by an extreme seasonal cycle, retreating glaciers and recurrent drought \cite{vuille2018andes,baraer2012glacier,lavado2012peru}. On the Altiplano, the endorheic plateau shared by Peru, Bolivia and Chile, rivers such as the Coata--Cabanillas feed Lake Titicaca and depend almost entirely on a short austral-summer wet season \cite{garreaud2003altiplano}; climate projections point to more frequent and longer hydrological droughts in the Titicaca--Desaguadero--Poop\'o system \cite{zubieta2021titicaca}. Short-range discharge forecasts and early drought signals are therefore valuable, but gauges are sparse, records are gappy, and operational tools are rarely open.
+Streamflow in the tropical Andes sustains irrigation, hydropower and drinking water for millions of people, yet it is shaped by an extreme seasonal cycle, retreating glaciers and recurrent drought \cite{vuille2018andes,baraer2012glacier,lavado2012peru}. On the Altiplano, the endorheic plateau shared by Peru, Bolivia and Chile, rivers such as the Coata--Cabanillas feed Lake Titicaca and depend almost entirely on a short austral-summer wet season \cite{garreaud2003altiplano}; climate projections point to more frequent and longer hydrological droughts in the Titicaca--Desaguadero--Poop\'o system \cite{zubieta2021titicaca}. Short-range discharge forecasts and early drought signals are therefore valuable. In practice, however, gauges are sparse, records are gappy and operational tools are rarely open.
 
-Machine learning (ML) is increasingly used for data-driven streamflow forecasting \cite{yaseen2015ai,mosavi2018flood,kratzert2018lstm,kratzert2019lstm,nearing2021role}. For daily lead times, however, discharge is strongly autocorrelated, and the naive persistence forecast $\hat{Q}_{t+h}=Q_t$ is a demanding benchmark \cite{pappenberger2015benchmarks,murphy1988skill}. Reported gains can be inflated by (i) comparing models against weak references, (ii) randomly shuffled cross-validation that leaks temporal information \cite{bergmeir2012cv,roberts2017cv,torres2026blockedcv}, and (iii) implementation details that give baselines and learners different information at issue time. We found the last issue in an earlier version of our own pipeline: the learners saw discharge only up to $t-1$ while persistence used $Q_t$. Calendar gaps were also treated as consecutive days. Correcting both reversed the one-day conclusion, which motivated the protocol reported here.
+Machine learning (ML) is increasingly used for data-driven streamflow forecasting \cite{yaseen2015ai,mosavi2018flood,kratzert2018lstm,kratzert2019lstm,nearing2021role}. For daily lead times, however, discharge is strongly autocorrelated, and the naive persistence forecast $\hat{Q}_{t+h}=Q_t$ is a demanding benchmark \cite{pappenberger2015benchmarks,murphy1988skill}. Reported gains can be inflated by (i) comparing models against weak references, (ii) randomly shuffled cross-validation that leaks temporal information \cite{bergmeir2012cv,roberts2017cv,torres2026blockedcv}, and (iii) implementation details that give baselines and learners different information at issue time. An earlier version of our own pipeline suffered from the third problem: the learners saw discharge only up to $t-1$ while persistence used $Q_t$, and calendar gaps were treated as consecutive days. Correcting both reversed the one-day conclusion, and this experience motivated the explicit protocol reported here.
 
-This paper contributes an open, laptop-scale benchmark for the Peruvian Andes and the Altiplano that makes these choices explicit. Specifically, we:
+This paper contributes an open, laptop-scale benchmark for the Peruvian Andes and the Altiplano in which every evaluation choice is explicit and tested. Specifically, we:
 \begin{enumerate}
 \item assemble \nGauges{} long-record gauges from the Andean-GC dataset \cite{aguayo2026andeangc}, covering three regions: \nGaugesAlti{} Altiplano gauges (Cabanillas, Peru, and the Lauca/Caquena headwaters, Chile), \nGaugesCB{} glacier-fed Cordillera Blanca gauges and \nGaugesWSA{} western/southern Andean gauges. We fuse them with ERA5 reanalysis forcing \cite{hersbach2020era5}, MERRA-2-based NASA POWER precipitation and GloFAS~v4 simulated discharge;
 \item define a leakage-free protocol: a calendar-continuous index, identical information at issue time for all methods, chronological splits with an embargo, hyper-parameter selection on validation only, and expanding-window walk-forward checks;
 \item report skill against persistence with moving-block bootstrap intervals \cite{kunsch1989block} and Diebold--Mariano tests \cite{diebold1995dm,harvey1997dm}, at 1-, 3- and 7-day leads;
 \item evaluate drought detection directly, using the variable-threshold level method \cite{vanloon2015explained,fleig2006threshold} and categorical scores \cite{schaefer1990csi}, and release a nonparametric standardized streamflow index \cite{farahmand2015nonparametric}.
 \end{enumerate}
-All code, data extracts and figures are openly available in the project repository: {\small\url{\githubUrl}}.
+The paper is organised as follows. Section~\ref{sec:related} reviews related work, Sect.~\ref{sec:data} describes the data and Sect.~\ref{sec:methods} the methods. Section~\ref{sec:results} presents the results, Sect.~\ref{sec:discussion} discusses them, and Sect.~\ref{sec:repo} documents the open repository (\url{\githubUrl}).
 
 \section{Related Work}
 \label{sec:related}
 
-\textbf{Data-driven streamflow forecasting in the Andes.} Random forests have been used for runoff and flash-flood forecasting in Ecuadorian Andean catchments \cite{munoz2018rf}, recently combined with satellite precipitation and hydrological knowledge \cite{munoz2025rf}. Support-vector regression was tested for monthly runoff in the Central Andes of Argentina \cite{teverovsky2023svr}. In Peru, artificial neural networks have forecast monthly flows in the high-Andean Crisnejas basin \cite{ramos2023crisnejas}, and $k$-nearest neighbours daily flows of the Ramis River on the Altiplano \cite{quispe2023ramis}. Ensemble data assimilation with a conceptual model improved hourly forecasts in the Vilcanota basin \cite{llauca2023vilcanota}. On the Altiplano, Lujano et al.\ found that reanalysis precipitation performs well against gauges, but gridded forcing can still degrade conceptual-model streamflow \cite{lujano2025gridded}. That result motivates both our reanalysis-forced features and the data-fusion ablation. Large-sample LSTM studies set the methodological reference for data-driven hydrology \cite{kratzert2018lstm,kratzert2019lstm,gauch2021lstm,addor2017camels,nearing2021role}. Most Andean studies, however, evaluate one basin, one lead time, and NSE without a persistence reference or uncertainty. Our prior multi-station climate-ML study of Altiplano frost \cite{torres2025frost} used the same comparative-benchmark design.
+\textbf{Data-driven streamflow forecasting in the Andes.} Random forests have been used for runoff and flash-flood forecasting in Ecuadorian Andean catchments \cite{munoz2018rf}, recently combined with satellite precipitation and hydrological knowledge \cite{munoz2025rf}. Support-vector regression was tested for monthly runoff in the Central Andes of Argentina \cite{teverovsky2023svr}. In Peru, artificial neural networks have forecast monthly flows in the high-Andean Crisnejas basin \cite{ramos2023crisnejas}, and $k$-nearest neighbours daily flows of the Ramis River on the Altiplano \cite{quispe2023ramis}. Ensemble data assimilation with a conceptual model improved hourly forecasts in the Vilcanota basin \cite{llauca2023vilcanota}. On the Altiplano, Lujano et al.\ found that reanalysis precipitation performs well against gauges, but gridded forcing can still degrade conceptual-model streamflow \cite{lujano2025gridded}. This result motivates both our reanalysis-based features and the data-fusion ablation. Large-sample LSTM studies set the methodological reference for data-driven hydrology \cite{kratzert2018lstm,kratzert2019lstm,gauch2021lstm,addor2017camels,nearing2021role}. Most Andean studies, however, evaluate a single basin at a single lead time, using NSE without a persistence reference or an uncertainty estimate. Our prior multi-station climate-ML study of Altiplano frost \cite{torres2025frost} used the same comparative-benchmark design.
 
 \textbf{Validation under dependence.} Random $k$-fold cross-validation is optimistic for autocorrelated or spatially structured data \cite{bergmeir2012cv,roberts2017cv}. For Peruvian agricultural survey data, blocked cross-validation revealed that random folds overstated accuracy \cite{torres2026blockedcv}, and hierarchical spatial models were needed to characterise climate vulnerability \cite{torres2026bayescar}. We transfer the same principle to time: chronological blocks with an embargo, and walk-forward refits.
 
 \textbf{Hydrological drought.} Hydrological drought is a below-normal availability of streamflow or storage \cite{vanloon2015explained,mishra2010review}. It is identified with threshold-level methods \cite{fleig2006threshold,vanloon2015severity} or with standardized indices such as the SRI/SSI \cite{shukla2008sri,vicenteserrano2012ssi}, which are analogues of the SPI and SPEI \cite{mckee1993spi,vicenteserrano2010spei}. Parametric SSI values are sensitive to the chosen distribution \cite{tijdeman2020ssi}, which motivates nonparametric plotting-position formulations \cite{farahmand2015nonparametric,gringorten1963}. Drought forecasting requires an explicit identification step after the streamflow forecast, and the chosen definition changes the result \cite{sutanto2021definitions,hao2018prediction,sucozhanay2026threshold}. We therefore score drought days explicitly instead of inferring them from RMSE.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.88\textwidth]{figuras/fig00_station_map.pdf}
+\caption{The \nGauges{} benchmark gauges and their Andean-GC catchments, coloured by region. The Altiplano focus gauge Puente Isla Cabanillas is highlighted. Insets show the Cordillera Blanca and Chilean Altiplano clusters.}
+\label{fig:map}
+\end{figure}
 
 \section{Study Area and Data}
 \label{sec:data}
@@ -74,14 +81,9 @@ All code, data extracts and figures are openly available in the project reposito
 
 \textbf{Simulated discharge.} GloFAS~v4 reanalysis discharge is retrieved from the Open-Meteo Flood API (available from 1984) on a $3\times3$ neighbourhood of 0.05$^\circ$ cells around each gauge. The cell used is the one with the highest KGE over the fitting period only, so the test period is never used for this choice.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.88\textwidth]{figuras/fig00_station_map.pdf}
-\caption{The \nGauges{} benchmark gauges and their Andean-GC catchments, coloured by region. The Altiplano focus gauge Puente Isla Cabanillas is highlighted. Insets show the Cordillera Blanca and Chilean Altiplano clusters.}
-\label{fig:map}
-\end{figure}
 
-\begin{table}[t]
+
+\begin{table}[!htb]
 \centering
 \caption{Benchmark gauges (Andean-GC, $\ge$5000 QC days). Area in km$^2$; $n_{\mathrm{test}}$ is the number of test days at a 7-day lead. $^\star$Focus gauge.}
 \label{tab:gauges}

@@ -25,22 +25,22 @@
 
 \hypersetup{
   pdftitle={When Machine Learning Beats Persistence: A Leakage-Free Streamflow and Drought Benchmark for the Tropical Andes},
-  pdfauthor={Richar Andre Vilca-Solorzano; Dina Maribel Yana-Yucra; Renato Quispe-Vargas},
+  pdfauthor={Richar Andre Vilca-Solorzano; Renato Quispe-Vargas; Dina Maribel Yana-Yucra},
   pdfkeywords={Tropical Andes, Altiplano, Streamflow forecasting, Hydrological drought, Machine learning, Data leakage, Benchmark}}
 
 \begin{document}
 
 \title*{When Machine Learning Beats Persistence: A Leakage-Free Streamflow and Drought Benchmark for the Tropical Andes}
 \titlerunning{Leakage-Free Andean Streamflow--Drought Benchmark}
-\author{Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra and Renato Quispe-Vargas}
+\author{Richar Andre Vilca-Solorzano, Renato Quispe-Vargas and Dina Maribel Yana-Yucra}
 \authorrunning{R. A. Vilca-Solorzano et al.}
 \maketitle
 
 \vspace*{-26mm}
 \noindent{\small Faculty of Statistical and Computer Engineering, Universidad Nacional del Altiplano, Av.~Floral 1153, Puno 21001, Peru\\[2pt]
 \textbf{Corresponding author:} R.\,A. Vilca-Solorzano, \href{mailto:\emailAndre}{\emailAndre}\phoneLine\\
-D.\,M. Yana-Yucra, \href{mailto:\emailMaribel}{\emailMaribel}; R. Quispe-Vargas, \href{mailto:\emailRenato}{\emailRenato}\\[2pt]
-ORCID: \orcidAndre{}, \orcidMaribel{}, \orcidRenato{}}
+R. Quispe-Vargas, \href{mailto:\emailRenato}{\emailRenato}; D.\,M. Yana-Yucra, \href{mailto:\emailMaribel}{\emailMaribel}\\[2pt]
+ORCID: \orcidAndre{}, \orcidRenato{}, \orcidMaribel{}}
 \par\medskip
 
 \abstract*{Reported machine-learning gains in Andean streamflow forecasting are often inflated by evaluation leakage. We publish an open benchmark of \nGauges{} long-record gauges from the Andean Glacierized Catchment dataset: \nGaugesAlti{} on the Altiplano, including Puente Isla Cabanillas in the Lake Titicaca basin, \nGaugesCB{} in the Cordillera Blanca and \nGaugesWSA{} in the western and southern Andes. The gauges are combined with ERA5 and MERRA-2 forcing and GloFAS~v4 simulated discharge. Persistence and climatology are compared with six learners at 1-, 3- and 7-day leads. The protocol is calendar-continuous, embargoed and validation-tuned, with block-bootstrap confidence intervals, Diebold--Mariano tests and walk-forward refits. The learners beat persistence at \nPosOne{} of \nGauges{} gauges at one day and at \nPosSeven{} of \nGauges{} at seven days (median skill \medSkillSeven{}). At Cabanillas the one-day skill is \focusBestSkillOne{} (95\% confidence interval \focusBestLoOne--\focusBestHiOne), the opposite of what an earlier leaky pipeline reported. Yet a lower root-mean-square error does not improve the detection of drought days: the median critical success index is \medCsiPers{} for persistence and \medCsiBest{} for the learners. Hydrological drought decorrelates over a few hundred kilometres, and skill follows hydroclimatic regime rather than geography, so dense gauge networks matter more than distant proxies.}

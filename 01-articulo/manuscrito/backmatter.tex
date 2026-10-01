@@ -1,0 +1,20 @@
+\section*{Data availability}
+Daily quality-controlled discharge and catchment polygons are from Andean-GC (Zenodo, doi:\href{https://doi.org/10.5281/zenodo.18035801}{10.5281/zenodo.18035801}; CC~BY~4.0). ERA5 precipitation and temperature were retrieved through the Open-Meteo Historical Weather API \cite{openmeteo}. Additional data came from NASA POWER (MERRA-2 \texttt{PRECTOTCORR}) and GloFAS~v4 reanalysis via the Open-Meteo Flood API. The gauge extracts, forcing caches, fetch manifests and all result tables are archived in the project repository.
+
+\section*{Code availability}
+The full pipeline is released under the MIT licence at {\small\url{\githubUrl}}. It covers data retrieval, feature construction, models, uncertainty and drought scores, the automatic generation of every number and table in this paper, the QGIS map script and the validation tests. To reproduce, run \texttt{fetch\_data.py}, \texttt{run\_experiment.py}, \texttt{plots.py}, \texttt{spatial\_analysis.py} and \texttt{make\_cifras.py} from \texttt{03-codigo/}.
+
+\section*{Author contributions (CRediT)}
+\textbf{R.\,A. Vilca-Solorzano}: Conceptualization, Methodology, Software, Data curation, Formal analysis, Visualization, Writing -- original draft, Writing -- review \& editing.
+\textbf{D.\,M. Yana-Yucra}: Methodology, Validation, Investigation, Writing -- review \& editing.
+\textbf{R. Quispe-Vargas}: Data curation, Validation, Visualization, Writing -- review \& editing.
+All authors read and approved the final manuscript.
+
+\section*{Competing interests}
+The authors declare no competing interests.
+
+\section*{Ethics and intended use}
+No human subjects or personal data were involved. The forecasts are research benchmarks. They are not operational warnings and should not replace the official products of SENAMHI, DGA or other national services.
+
+\section*{Acknowledgements}
+We thank the Andean-GC team and the national hydrological services whose records it compiles (SENAMHI, Peru; DGA, Chile), Copernicus/ECMWF (ERA5, GloFAS), NASA POWER and Open-Meteo for open data, and the Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano, for academic support.

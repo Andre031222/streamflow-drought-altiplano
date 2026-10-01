@@ -1,98 +1,79 @@
-# An Open Multi-Station Benchmark for Streamflow Forecasts and Hydrological Drought Indication in the Peruvian Altiplano
+# Honest Baselines for Streamflow and Hydrological-Drought Forecasting in the Tropical Andes
 
-**Venue target:** ICICCDS 2027  
-**Authors:** Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra  
-**Affiliation:** Universidad Nacional del Altiplano (UNAP), Facultad de Ingenieria Estadistica e Informatica (FINESI), Puno, Peru  
-**ORCID:** [0009-0003-2385-5263](https://orcid.org/0009-0003-2385-5263) (Vilca-Solorzano), [0009-0003-6218-2735](https://orcid.org/0009-0003-6218-2735) (Yana-Yucra)  
-**Corresponding email:** andrevilcasolorzano@gmail.com  
-**Code:** https://github.com/Andre031222/streamflow-drought-altiplano
+**An open, leakage-free multi-station benchmark with an Altiplano focus.**
 
-Reproducible laptop-scale **multi-station Peru benchmark** (13 SENAMHI gauges with Andean-GC `days_w_data_qc >= 5000`) comparing persistence, seasonal climatology, Ridge, Random Forest, Gradient Boosting, XGBoost, and a small MLP for 1- and 7-day streamflow forecasts. Altiplano focus: **Puente Isla Cabanillas** (`P00000055`), plus SSI-30 drought index (month-wise z-score of 30-day mean; parametric approx.).
+**Venue:** ICICCDS 2027, International Conference on Intelligent Computing, Communication and Data Science
+**Authors:** Richar Andre Vilca-Solorzano\* ([0009-0003-2385-5263](https://orcid.org/0009-0003-2385-5263)), Dina Maribel Yana-Yucra ([0009-0003-6218-2735](https://orcid.org/0009-0003-6218-2735)), Renato Quispe-Vargas ([0009-0005-2367-7852](https://orcid.org/0009-0005-2367-7852))
+**Affiliation:** Faculty of Statistical and Computer Engineering (FINESI), Universidad Nacional del Altiplano (UNAP), Puno, Peru
+\* Corresponding author: 75521963@est.unap.edu.pe
 
-## Related open repositories
+## What this repository contains
 
-This paper continues an open Altiplano research / software line:
+The benchmark covers 19 long-record Andean-GC gauges in three regions:
 
-| Repository | Role | Citation / DOI |
-| --- | --- | --- |
-| [frost-prediction-altiplano-puno](https://github.com/Andre031222/frost-prediction-altiplano-puno) | Prior multi-station comparative climate ML (frost / $T_{min}$) | IJACSA 2025, [10.14569/IJACSA.2025.0160992](https://doi.org/10.14569/IJACSA.2025.0160992) |
-| [agroyachay](https://github.com/Andre031222/agroyachay) | Cloud IoT + LLM platform for Andean smallholders | SoftwareX 2026, [10.1016/j.softx.2026.103037](https://doi.org/10.1016/j.softx.2026.103037); Zenodo [10.5281/zenodo.20829992](https://doi.org/10.5281/zenodo.20829992) |
-| [agrocommish](https://github.com/Andre031222/agrocommish) | Desktop ESP32 edge commissioning companion to AgroYachay | Zenodo software [10.5281/zenodo.20655609](https://doi.org/10.5281/zenodo.20655609) (SoftwareX in preparation; **not** a published journal article) |
-| [streamflow-drought-altiplano](https://github.com/Andre031222/streamflow-drought-altiplano) | **This paper** — open hydrology analysis / streamflow & drought forecasting (not farm IoT) | ICICCDS 2027 target |
+- **Altiplano (7):** Puente Isla Cabanillas in Peru, in the Lake Titicaca basin, plus the Lauca/Caquena headwaters in Chile.
+- **Cordillera Blanca (6):** glacier-fed catchments.
+- **Western/southern Andes (6).**
 
-## Canonical manuscript
+The gauges are fused with ERA5, NASA POWER/MERRA-2 and GloFAS v4. Persistence and climatology are compared with Ridge, random forest, histogram gradient boosting, XGBoost (level and log-change targets) and an MLP at 1-, 3- and 7-day leads.
 
-- LaTeX (Springer SVMult): `01-articulo/manuscrito/caudal-sequia-altiplano.tex`
-- Shared macros / numbers: `01-articulo/manuscrito/cifras.tex`
-- Compiled PDF copy: `01-articulo/caudal-sequia-altiplano.pdf`
-- Abstract draft: `01-articulo/00-abstract.md`
+The protocol is designed to avoid leakage:
 
-Compile:
+- a calendar-continuous daily index, so lags are true day offsets;
+- identical information at issue time for every method, including Q_t;
+- chronological 70/15/15 splits with an h-day embargo between blocks;
+- validation-only selection of hyper-parameters and target form;
+- 95% moving-block bootstrap intervals and Diebold–Mariano tests of skill against persistence;
+- drought-day detection scored with POD, FAR and CSI (variable threshold), plus a nonparametric SSI-30;
+- expanding-window walk-forward refits at every gauge;
+- spatial statistics: a drought-synchrony correlogram, Moran's I of skill and catchment-attribute drivers;
+- maps rendered with **QGIS 4.2** (PyQGIS, headless).
 
-```bash
-cd 01-articulo/manuscrito
-pdflatex caudal-sequia-altiplano.tex
-pdflatex caudal-sequia-altiplano.tex
-```
+## Key results (generated automatically; see `04-resultados/tablas/metrics_summary.md`)
 
-Figures are included from `figuras/` (symlink to `04-resultados/figuras/`).
+- At 7 days, learners beat persistence at **18/19** gauges, with median skill **0.101**. The 95% CI excludes zero at 12 gauges.
+- At 1 day, learners beat persistence at 15/19 gauges. At Cabanillas the skill is **0.110 [0.064, 0.144]**. An earlier, leaky version of this pipeline had reported a loss here.
+- Walk-forward: 53 of 57 gauge–fold combinations have positive 7-day skill (median 0.103).
+- RMSE gains do not carry over to drought-day detection. Median CSI is **0.43 for persistence and 0.30 for the learners**.
+- Hydrological drought decorrelates over **≈582 km**. Skill shows no spatial clustering (Moran's I p = 0.37) and instead follows hydroclimatic regime.
 
-## Repository layout
+## Layout
 
 | Path | Content |
 | --- | --- |
-| `01-articulo/manuscrito/` | Springer manuscript sources |
-| `02-datos/fuentes/INVENTARIO.md` | Data URLs and licenses |
-| `02-datos/crudos/stations/` | Extracted daily QC CSVs (13 stations) |
-| `02-datos/crudos/openmeteo/` | Open-Meteo precip caches |
-| `02-datos/procesados/` | Merged series, SSI, prediction tables |
-| `03-codigo/` | Python multi-station pipeline |
-| `04-resultados/figuras/` | Figures (PNG at 600 dpi + PDF) |
-| `04-resultados/tablas/` | `metrics_by_station.csv`, walk-forward, summary |
+| `00-gestion/` | Decisions, plan and project log (`00-INDICE.md`) |
+| `01-articulo/manuscrito/` | Springer SVMult source: `caudal-sequia-altiplano.tex`, `results.tex` and `backmatter.tex`; auto-generated `cifras.tex` and `tab_*.tex`; `references.bib` (DOIs verified, see `references_verification.md`) |
+| `01-articulo/caudal-sequia-altiplano.pdf` | Submission PDF |
+| `02-datos/fuentes/INVENTARIO.md` | Data provenance and licences |
+| `02-datos/crudos/stations/` | 19 gauge extracts and `benchmark_stations.csv` |
+| `02-datos/crudos/clima/` | ERA5, MERRA-2 (NASA POWER) and GloFAS caches and fetch manifests |
+| `03-codigo/` | Pipeline: `extract_stations.py`, `fetch_data.py`, `run_experiment.py`, `plots.py`, `spatial_analysis.py`, `make_cifras.py`, `tests/` |
+| `03-codigo/maps/` | QGIS map scripts (`make_fig00_qgis.py`, `make_fig08_spatial_qgis.py`) and `.qgz` project |
+| `04-resultados/` | Figures (600 dpi PNG + PDF) and result tables |
 
-## How to reproduce
-
-Requirements: Python 3.10+ (tested on macOS arm64 with Python 3.14), about 500 MB disk for the Andean-GC QC CSV.
+## Reproduce
 
 ```bash
-cd /path/to/streamflow-drought-altiplano
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 export MPLBACKEND=Agg
-python 03-codigo/run_experiment.py
+python -m pytest 03-codigo/tests -q        # leakage / calendar / metric tests
+python 03-codigo/extract_stations.py       # needs the Andean-GC QC CSV from Zenodo
+python 03-codigo/fetch_data.py             # ERA5, NASA POWER, GloFAS (rate-limited, resumable)
+python 03-codigo/run_experiment.py         # about 4 min on a 10-core laptop
+python 03-codigo/plots.py
+python 03-codigo/spatial_analysis.py
+python 03-codigo/make_cifras.py            # writes every number in the paper
+# maps (QGIS 4.2 bundled Python; see the script docstrings)
+python 03-codigo/maps/make_fig00_qgis.py
+python 03-codigo/maps/make_fig08_spatial_qgis.py
+cd 01-articulo/manuscrito && pdflatex caudal-sequia-altiplano && bibtex caudal-sequia-altiplano && pdflatex caudal-sequia-altiplano && pdflatex caudal-sequia-altiplano
 ```
 
-### Data not shipped in git (size)
+## Data and licences
 
-The full Andean-GC QC CSV (`AndeanGC_data_1950_2024_qc.csv`, ~22 MB) is **excluded** from this repository. Download Andean-GC from Zenodo ([10.5281/zenodo.18035801](https://doi.org/10.5281/zenodo.18035801)), place the QC CSV and metadata under `02-datos/crudos/andean-gc/`, then re-run `03-codigo/extract_stations.py` if you need to rebuild station extracts. The 13 station CSVs under `02-datos/crudos/stations/`, Open-Meteo caches, processed tables, metrics and figures **are** included for reproducibility without re-downloading the full dump.
+- Andean-GC: [10.5281/zenodo.18035801](https://doi.org/10.5281/zenodo.18035801), CC BY 4.0.
+- ERA5 and GloFAS: Copernicus, accessed via Open-Meteo (CC BY 4.0).
+- NASA POWER: public NASA data.
 
-Outputs:
-
-- `04-resultados/tablas/metrics_by_station.csv`
-- `04-resultados/tablas/metrics_walkforward_cabanillas.csv`
-- `04-resultados/tablas/metrics_summary.md`
-- `04-resultados/figuras/fig01_*` ... `fig08_*` (PNG 600 dpi and PDF)
-
-## Key results (actual multi-station run only)
-
-Stations used: **13**. Focus: Puente Isla Cabanillas (`P00000055`), chronological test $n=982$ (h=1).
-
-| Model | Horizon | NSE | KGE | Skill vs persistence |
-| --- | ---: | ---: | ---: | ---: |
-| persistence | 1 d | 0.902 | 0.951 | 0.000 |
-| MLP (best ML at 1 d) | 1 d | 0.871 | 0.912 | -0.146 |
-| Ridge (best at 7 d) | 7 d | 0.550 | 0.674 | +0.086 |
-| persistence | 7 d | 0.462 | 0.731 | 0.000 |
-
-Multi-station (h=7): best ML skill > 0 at **13/13** stations (median skill 0.102); Ridge skill > 0 at 13/13 (mean skill 0.078). Walk-forward Ridge at Cabanillas h=7: mean skill 0.100 across 3 expanding folds.
-
-Full metrics: `04-resultados/tablas/metrics_by_station.csv`. Do not substitute invented numbers.
-
-## Data provenance
-
-See `02-datos/fuentes/INVENTARIO.md` (Andean-GC CC BY 4.0; Open-Meteo / ERA5-Land terms).
-
-## License
-
-MIT (see `LICENSE`). Upstream datasets keep their own licenses.
+Code is released under the MIT licence (`LICENSE`).

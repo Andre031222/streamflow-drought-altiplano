@@ -1,20 +1,9 @@
-# Abstract (ICICCDS 2027) — borrador v1
+# Abstract (ICICCDS 2027): versión final, generada desde el manuscrito
 
-**Title:** Open-data machine learning for streamflow and hydrological drought forecasting in the Peruvian Altiplano
+**Title:** Honest Baselines for Streamflow and Hydrological-Drought Forecasting in the Tropical Andes: An Open, Leakage-Free Multi-Station Benchmark with an Altiplano Focus
 
-**Authors:** Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra  
-**Affiliation:** Universidad Nacional del Altiplano, Puno, Peru  
-**Track (sugerido):** Intelligent Computing & AI / Data Science & Big Data Analytics
+**Authors:** Richar Andre Vilca-Solorzano, Dina Maribel Yana-Yucra, Renato Quispe-Vargas (FINESI–UNAP, Puno, Peru)
 
-## Abstract (English)
+Short-range streamflow forecasts and early drought signals are valuable in the tropical Andes, but published machine-learning gains are hard to compare because evaluation protocols are rarely leakage-free. We release an open benchmark of 19 long-record gauges from Andean-GC: 7 on the Altiplano, including Puente Isla Cabanillas (Lake Titicaca basin), 6 in the Cordillera Blanca and 6 in the western/southern Andes. The gauges are fused with ERA5, MERRA-2 and GloFAS v4 data. Persistence and climatology are compared with Ridge, random forest, gradient boosting, XGBoost and neural-network learners at 1-, 3- and 7-day leads. The protocol uses a calendar-continuous index, identical information at issue time, embargoed chronological splits, validation-only tuning, block-bootstrap intervals, Diebold–Mariano tests and walk-forward refits. Learners beat persistence at 15/19 gauges at one day and at 18/19 at seven days (median skill 0.101; significant at 12). At Cabanillas the one-day skill is 0.110 (95% CI 0.064–0.144), whereas an earlier leaky pipeline had reported a loss. Lower RMSE did not improve drought-day detection: persistence keeps the higher critical success index (0.43 vs. 0.30). Extra forcing and GloFAS added no skill. Spatially, hydrological drought decorrelates over ≈582 km, and skill shows no spatial clustering (Moran's I p = 0.374); instead it follows hydroclimatic regime. Code, data and QGIS maps are open.
 
-Hydrological drought and highly variable streamflow threaten water security for communities and agriculture across the Peruvian Altiplano. Operational forecasting is often limited by sparse gauges and uneven access to proprietary models. We present a fully open, reproducible machine-learning pipeline for short-horizon streamflow forecasting and hydrological drought indication using publicly available discharge and climate series for Altiplano basins. After quality control and lag-based feature construction, we compare classical baselines (persistence and seasonal climatology) against lightweight learners suitable for commodity laptops (regularized linear models, random forests, and gradient boosting), under a strict temporal train–validation–test split that prevents leakage. Forecast skill is reported with RMSE, MAE, Nash–Sutcliffe efficiency (NSE), and skill relative to persistence at multiple lead times. We further derive a simple standardized streamflow / drought index from the same open series to illustrate early-warning use cases. All raw sources, licenses, code, and metrics are released with the paper. Results show whether ML improves upon naive baselines under high-altitude hydroclimatic seasonality and highlight failure modes when gauges are short or gappy. The study does not claim operational replacement of national hydrological services; it offers a transparent benchmark and decision-support prototype for data-sparse Andean catchments.
-
-**Keywords:** streamflow forecasting, hydrological drought, Altiplano, open data, machine learning, Nash–Sutcliffe efficiency
-
-## Resumen (español)
-
-La sequía hidrológica y la alta variabilidad del caudal afectan la seguridad hídrica en el Altiplano peruano. Presentamos un pipeline abierto y reproducible de aprendizaje automático para pronóstico de caudal a corto plazo e indicios de sequía hidrológica, usando series públicas de descarga y clima. Comparamos baselines (persistencia y climatología estacional) con modelos livianos (lineales regularizados, bosques aleatorios y gradient boosting) bajo partición temporal estricta, reportando RMSE, MAE, NSE y skill frente a persistencia. Publicamos fuentes, licencias, código y métricas. El trabajo es un benchmark transparente para cuencas andinas con datos escasos, no un reemplazo operativo de los servicios hidrológicos nacionales.
-
-## Nota
-Los números de resultados se insertarán tras correr `03-codigo/run_experiment.py` (métricas reales, sin inventar).
+**Keywords:** streamflow forecasting; hydrological drought; Altiplano; machine learning; persistence baseline; data leakage; spatial statistics; open benchmark

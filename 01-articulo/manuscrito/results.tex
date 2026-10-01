@@ -1,0 +1,90 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Focus gauge: Puente Isla Cabanillas}
+Figure~\ref{fig:focus} shows the Cabanillas record, the chronological blocks and the nonparametric SSI-30. Table~\ref{tab:focus} reports all methods on the test period (\focusTestStart{} to \focusTestEnd{}). With identical information at issue time, persistence is no longer unbeatable at one day. The validation-selected \focusBestOne{} reaches NSE~$=$~\focusBestNseOne{} against \focusPersNseOne{} for persistence, a skill of \focusBestSkillOne{} (95\% CI \focusBestLoOne{} to \focusBestHiOne{}; Diebold--Mariano $p$~\focusBestDmpOne{}). This reverses the one-day conclusion of the earlier, leaky version of the pipeline (Sect.~\ref{sec:intro}). At seven days, persistence drops to NSE~$=$~\focusPersNseSeven{}. Ridge regression on the change target gives the most robust gain (skill \focusRidgeSkillSeven{}, CI excluding zero), and its walk-forward folds give skills of \wfFocusSkills{}. The learner selected on validation at this lead (\focusBestSeven{}) has a smaller, non-significant skill of \focusBestSkillSeven{}. Validation-based selection is unbiased, but it is noisy when validation and test hydrology differ.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figuras/fig01_focus_hydrograph_ssi.pdf}
+\caption{Puente Isla Cabanillas: daily discharge (log scale) with the chronological train/validation/test blocks, and the nonparametric SSI-30 (red: below normal). Gaps are real missing records.}
+\label{fig:focus}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Test-period scores at Puente Isla Cabanillas. Skill is relative to persistence with 95\% block-bootstrap CI. DM: Diebold--Mariano $p$-value. CSI: drought-day detection. $^\dagger$Learner selected on validation RMSE.}
+\label{tab:focus}
+\scriptsize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{rlrrrrcrr}
+\toprule
+$h$ & Method & RMSE & NSE & KGE & Skill & 95\% CI & DM $p$ & CSI \\
+\midrule
+\inputtable{tab_focus.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Multi-station benchmark}
+Across the \nGauges{} gauges, the validation-selected learner beats persistence at \nPosOne{}/\nEvalOne{} gauges at one day, \nPosThree{}/\nEvalThree{} at three days and \nPosSeven{}/\nEvalSeven{} at seven days. Its 95\% interval excludes zero at \nSigOne{}, \nSigThree{} and \nSigSeven{} gauges, respectively (Fig.~\ref{fig:heatmap}). The median skill grows with lead time, from \medSkillOne{} to \medSkillThree{} and \medSkillSeven{}, because persistence degrades faster than the learners (Fig.~\ref{fig:lead}). The regions behave differently. Skill rises steeply with lead time in the Cordillera Blanca (median \medSkillCBOne{} to \medSkillCBSeven{}) and in the western/southern Andes (\medSkillWSAOne{} to \medSkillWSASeven{}). On the Altiplano it stays flat (\medSkillAltiOne{} to \medSkillAltiSeven{}), and the smallest Chilean headwater (Caquena at its source, 50~km$^2$) remains negative at seven days. Model choice matters less than the protocol: Ridge alone is skilful at \nRidgePosSeven{}/\nGauges{} gauges at seven days. The change target was selected in \pctDeltaTarget\% of the learner fits. The expanding-window walk-forward confirms the pattern: \wfNPos{} of \wfNFolds{} gauge--fold combinations have positive seven-day Ridge skill (median \wfMedSkill{}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\textwidth]{figuras/fig03_skill_heatmap_h7.pdf}
+\caption{Seven-day RMSE skill against persistence for every gauge and method. Boxed cells: 95\% moving-block bootstrap interval above zero. Gauge labels are coloured by region.}
+\label{fig:heatmap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figuras/fig04_lead_skill_by_region.pdf}
+\caption{Skill of the validation-selected learner versus lead time, by region (thin lines: gauges; thick: median).}
+\label{fig:lead}
+\end{figure}
+
+\subsection{Hydrological-drought detection}
+Lower RMSE does not translate into better drought detection (Fig.~\ref{fig:drought}). At seven days, the median CSI of drought days is \medCsiPers{} for persistence and \medCsiBest{} for the validation-selected learner. The learner beats persistence at only \nCsiBestBeats{}/\nGauges{} gauges. The low-flow-oriented XGBoost-log does not close the gap (median CSI \medCsiXgbLog{}; better than persistence at \nCsiXgbLogBeats{} gauges). The learners are more conservative: they raise fewer false alarms (median FAR \medFarBest{} vs.\ \medFarPers{}) but miss more drought days (POD \medPodBest{} vs.\ \medPodPers{}). The reason is that RMSE-trained models regress towards the conditional mean and smooth the recession limb, near where the threshold lies. This agrees with the view that drought forecasting needs its own identification and verification step \cite{sutanto2021definitions}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figuras/fig05_drought_detection_h7.pdf}
+\caption{Seven-day detection of drought days (variable threshold: monthly Q20 of the fitting period). Left: CSI; right: false-alarm ratio.}
+\label{fig:drought}
+\end{figure}
+
+\subsection{Data fusion and the GloFAS reference}
+At the \nFusion{} gauges where MERRA-2 and GloFAS overlap the record, adding them to the ERA5 predictors changes the seven-day skill by a median of \fusionMedDeltaRidge{} for Ridge and \fusionMedDeltaXGBoost{} for XGBoost. Only \fusionNPosRidge{} and \fusionNPosXGBoost{} gauges improve, respectively. The raw GloFAS~v4 simulation, even with the cell chosen on the fitting period, has a median NSE of \glofasMedNse{} (positive at \glofasNPosNse{}/\nFusion{} gauges). At these small, steep Andean catchments, recent observed discharge carries far more short-range information than a global model or a second reanalysis.
+
+\subsection{Spatial statistics}
+Hydrological drought is spatially coherent but local (Fig.~\ref{fig:spatial}a). Across \nPairs{} gauge pairs, the monthly SSI-30 correlation decreases with distance (Spearman \rhoDist{}, $p$~\pDist{}). It follows $\rho(d)=\corrC\,e^{-d/d_0}$ with a decorrelation distance $d_0=\corrDzero$~km (95\% CI \corrDzeroLo--\corrDzeroHi~km). Pairs within the same region correlate more strongly than pairs across regions (median $\rho$ \rhoSameRegion{} vs.\ \rhoCrossRegion{}). Even nearby gauges share only part of their drought signal, which shows that one gauge cannot represent drought on the Altiplano or in the Cordillera Blanca. Forecast skill, in contrast, shows no spatial clustering: Moran's $I=\moranI$ ($p=\moranP$; expectation \moranExp) (Figs.~\ref{fig:spatialmap} and~\ref{fig:spatial}b). Skill is better explained by hydroclimatic regime than by location. The strongest correlate is \topDriver{} ($\rho=\topDriverRho$, permutation $p=\topDriverP$, Holm-adjusted $p=\topDriverPholm$), followed by precipitation concentration and aridity. Skill tends to be lower in catchments with more snow, more concentrated precipitation and higher aridity, which is the hydroclimate of the Altiplano headwaters. However, only snow fraction approaches significance after correction for multiple testing.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figuras/fig08_spatial_skill_synchrony.pdf}
+\caption{QGIS maps of (a) seven-day skill of the validation-selected learner by catchment (bold outline: 95\% CI above zero) and (b) the hydrological-drought synchrony network (monthly SSI-30 Spearman correlation between gauge pairs with $\ge$60 overlapping months).}
+\label{fig:spatialmap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figuras/fig09_spatial_statistics.pdf}
+\caption{(a) Drought-synchrony correlogram with exponential fit (dotted: 95\% gauge-bootstrap range of $d_0$). (b) Spearman correlation between seven-day skill and catchment attributes (red: permutation $p<0.05$, uncorrected).}
+\label{fig:spatial}
+\end{figure}
+
+\section{Discussion}
+\label{sec:discussion}
+
+\textbf{Protocol before models.} The largest change in our conclusions came from the protocol, not from model choice. Giving persistence and learners the same information at issue time, and indexing on the calendar, turned a reported one-day loss into a significant gain. Hyper-parameter selection on validation and bootstrap intervals then separated robust gains from noise. We recommend that Andean ML forecasting studies report skill against persistence with uncertainty, publish their split and embargo design, and test leakage explicitly; our test suite does this automatically.
+
+\textbf{Where ML helps.} Gains are modest, a median RMSE reduction of about 5--10\%, but consistent: positive at almost every gauge at seven days and confirmed by walk-forward folds. Linear models on the change target are competitive with tree ensembles, in line with large-sample findings that careful baselines are hard to beat at short leads \cite{pappenberger2015benchmarks,nearing2021role}. The Altiplano is the hardest region. Its headwaters combine short convective wet-season pulses with long baseflow recessions \cite{garreaud2003altiplano}. A 0.25$^\circ$ reanalysis can represent this rainfall only partially, and even well-performing gridded products degrade conceptual streamflow simulations there \cite{lujano2025gridded}.
+
+\textbf{Drought is a different target.} Better RMSE did not yield better drought-day detection. Operational drought early warning should train or calibrate on the drought decision itself, for example with quantile or classification losses and threshold-aware post-processing, and verify it with categorical scores \cite{sutanto2021definitions,hao2018prediction}. The limited spatial coherence of drought ($d_0$ of a few hundred kilometres) argues for dense gauge networks rather than extrapolating from single stations, consistent with projected changes in the Titicaca system \cite{zubieta2021titicaca}.
+
+\textbf{Limitations.} ERA5 at 0.25$^\circ$ is coarse for steep catchments and has a wet bias over the Andes. The Cordillera Blanca records predate 1975, so no MERRA-2 or GloFAS data overlap them. The fusion ablation therefore covers \nFusion{} gauges only, and some GloFAS requests were rate-limited. The validation block is a single period, so selection can be unstable under non-stationarity (e.g., glacier retreat). Forecasts use observed rather than forecast forcing beyond $t$, which is acceptable here because predictors stop at $t$; skill against operational meteorological forecasts is left for future work.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We released an open, leakage-free benchmark for short-range streamflow and hydrological drought forecasting at \nGauges{} Andean gauges with an Altiplano focus. Under an honest protocol, data-driven models beat persistence at most gauges and leads: at seven days at \nPosSeven{}/\nGauges{} gauges (median skill \medSkillSeven{}), and also at one day at the Altiplano focus gauge, Cabanillas. RMSE gains do not carry over to drought-day detection, where persistence remains a strong reference. Hydrological drought decorrelates over about \corrDzero~km, and forecast skill depends on hydroclimatic regime rather than location. Future work will add drought-aware losses, operational meteorological forecasts and more Altiplano gauges from SENAMHI and ANA.

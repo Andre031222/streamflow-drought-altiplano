@@ -1,5 +1,5 @@
 # Manuscript sources
 
-Canonical file: **`caudal-sequia-altiplano.tex`** (macros in `cifras.tex`).
+Main file: **`caudal-sequia-altiplano.tex`**. It inputs `results.tex` and `backmatter.tex`, plus the auto-generated `cifras.tex` and `tab_*.tex` files, which are written by `03-codigo/make_cifras.py`. Do not edit those by hand.
 
-Compile with `pdflatex caudal-sequia-altiplano.tex` (twice). Figures live in `figuras/` (symlink to `../../04-resultados/figuras`).
+Compile with `pdflatex`, then `bibtex`, then `pdflatex` twice. Figures come from `figuras/`, a symlink to `../../04-resultados/figuras`.

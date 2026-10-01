@@ -161,11 +161,11 @@ Set `export MPLBACKEND=Agg` on headless machines. Steps 1–2 are needed only to
 
 ## Authors
 
-**Richar Andre Vilca-Solorzano**\* ([0009-0003-2385-5263](https://orcid.org/0009-0003-2385-5263)) · **Dina Maribel Yana-Yucra** ([0009-0003-6218-2735](https://orcid.org/0009-0003-6218-2735)) · **Renato Quispe-Vargas** ([0009-0005-2367-7852](https://orcid.org/0009-0005-2367-7852))
+**Richar Andre Vilca-Solorzano**\* ([0009-0003-2385-5263](https://orcid.org/0009-0003-2385-5263)) · **Renato Quispe-Vargas** ([0009-0005-2367-7852](https://orcid.org/0009-0005-2367-7852)) · **Dina Maribel Yana-Yucra** ([0009-0003-6218-2735](https://orcid.org/0009-0003-6218-2735))
 Faculty of Statistical and Computer Engineering, Universidad Nacional del Altiplano (UNAP), Puno, Peru.
 <sub>\* Corresponding author: <75521963@est.unap.edu.pe></sub>
 
-R. A. Vilca-Solorzano conceived the study, developed the software and analysis, and wrote the manuscript. D. M. Yana-Yucra contributed to the methodology, analysis and writing. R. Quispe-Vargas validated the results.
+R. A. Vilca-Solorzano conceived the study, developed the software and analysis, and wrote the manuscript. R. Quispe-Vargas validated the results and revised the manuscript. D. M. Yana-Yucra supervised the study, contributed to the methodology and analysis, and revised the manuscript.
 
 ---
 
@@ -173,7 +173,7 @@ R. A. Vilca-Solorzano conceived the study, developed the software and analysis, 
 
 ```bibtex
 @inproceedings{VilcaSolorzano2027Andes,
-  author    = {Vilca-Solorzano, Richar Andre and Yana-Yucra, Dina Maribel and Quispe-Vargas, Renato},
+  author    = {Vilca-Solorzano, Richar Andre and Quispe-Vargas, Renato and Yana-Yucra, Dina Maribel},
   title     = {When Machine Learning Beats Persistence: A Leakage-Free Streamflow and Drought
                Benchmark for the Tropical Andes},
   booktitle = {International Conference on Intelligent Computing, Communication and Data Science (ICICCDS 2027)},

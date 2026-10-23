@@ -2,7 +2,8 @@
 
 **A leakage-free streamflow and drought benchmark for the Tropical Andes**
 
-[![Proceedings](https://img.shields.io/badge/Conference%20proceedings-ICICCDS%202027-0F2444?style=flat-square)](https://cmt3.research.microsoft.com/ICICCDS2027)
+[![Proceedings](https://img.shields.io/badge/Proceedings%20paper-ICICCDS%202027%20(accepted)-2E7D32?style=flat-square)](https://www.iciccds.com/)
+[![Springer ADIC](https://img.shields.io/badge/Springer-ADIC%20series%20%C2%B7%20Scopus-0F2444?style=flat-square&logo=springer&logoColor=white)](https://www.iciccds.com/)
 [![Data: Andean-GC](https://img.shields.io/badge/Data-Andean--GC%2010.5281%2Fzenodo.18035801-1565C0?style=flat-square&logo=zenodo&logoColor=white)](https://doi.org/10.5281/zenodo.18035801)
 [![License: MIT](https://img.shields.io/badge/License-MIT-337AB7?style=flat-square)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
@@ -10,7 +11,7 @@
 [![Tests](https://img.shields.io/badge/leakage%20tests-7%20passing-2E7D32?style=flat-square)](03-codigo/tests/test_pipeline.py)
 [![Skill](https://img.shields.io/badge/7--day%20skill%20%3E%200-18%2F19%20gauges-2E7D32?style=flat-square)](#key-results)
 
-**Conference proceedings contribution** (not a journal article), submitted to the *International Conference on Intelligent Computing, Communication and Data Science* (**ICICCDS 2027**) and prepared in the Springer proceedings format (SVMult). This repository contains the complete code, data extracts and results behind the contribution.
+**Proceedings paper, accepted** (Paper ID 51) at the [*International Conference on Intelligent Computing, Communication and Data Science*](https://www.iciccds.com/) (**ICICCDS 2027**), to appear in the conference proceedings published by Springer in the series *Studies in Autonomic, Data-Driven and Industrial Computing* (ADIC, Scopus-indexed). It is a conference proceedings contribution, not a journal article. This repository contains the complete code, data extracts and results behind the contribution.
 
 ---
 
@@ -95,7 +96,7 @@ An earlier version of this pipeline was leaky and reported that persistence wins
 streamflow-drought-altiplano/
 ├── 00-gestion/                      # Project log, decisions, plan (Spanish)
 ├── 01-articulo/
-│   ├── caudal-sequia-altiplano_8p.pdf  # Proceedings version (8 pages, submitted)
+│   ├── caudal-sequia-altiplano_8p.pdf  # Proceedings version (8 pages, accepted)
 │   ├── caudal-sequia-altiplano.pdf     # Extended version (16 pages)
 │   ├── 00-abstract.md               # Abstract (generated from the manuscript)
 │   └── manuscrito/                  # Springer SVMult source
@@ -178,7 +179,9 @@ R. A. Vilca-Solorzano conceived the study, developed the software and analysis, 
                Benchmark for the Tropical Andes},
   booktitle = {International Conference on Intelligent Computing, Communication and Data Science (ICICCDS 2027)},
   year      = {2027},
-  note      = {Conference proceedings contribution, submitted},
+  publisher = {Springer},
+  series    = {Studies in Autonomic, Data-Driven and Industrial Computing},
+  note      = {Proceedings paper, accepted},
   url       = {https://github.com/Andre031222/streamflow-drought-altiplano}
 }
 ```

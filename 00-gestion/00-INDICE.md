@@ -49,7 +49,7 @@ pdflatex caudal-sequia-altiplano.tex
 - **Conferencia:** ICICCDS 2027
 - **Portal CMT:** https://cmt3.research.microsoft.com/ICICCDS2027
 - **PDF a enviar:** `01-articulo/caudal-sequia-altiplano.pdf`
-- **Autores:** Richar Andre Vilca-Solorzano y Dina Maribel Yana-Yucra (UNAP–FINESI)
-- **Estado:** pendiente de submit (fecha límite 30 Sep 2026 ampliada unas horas)
+- **Autores:** Richar Andre Vilca-Solorzano, Renato Quispe-Vargas y Dina Maribel Yana-Yucra (UNAP–FINESI)
+- **Estado:** ACEPTADO (Paper ID 51, correo CMT del 18 Oct 2026). Actas Springer, serie ADIC (Scopus). Pendiente: CRC en formato Springer + registro antes del 30 Oct 2026, enviar ambos a iciccds.congress@gmail.com y llenar el formulario post-pago.
 - **Nombre oficial (CMT):** International Conference on Intelligent Computing, Communication and Data Science. ICCCDS (Mumbai) es otro congreso distinto.
 

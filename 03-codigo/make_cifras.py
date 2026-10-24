@@ -137,6 +137,30 @@ def main() -> None:
     else:
         mac["nFusion"] = "0"
 
+    # --- resolution test: ERA5 vs ERA5 + CHIRPS (h = 7)
+    chf = cfg.TAB / "metrics_chirps_ablation.csv"
+    c7 = pd.read_csv(chf) if chf.exists() else pd.DataFrame()
+    c7 = c7[c7.horizon == 7] if not c7.empty else c7
+    if not c7.empty:
+        piv = c7.pivot_table(index=["gauge_id", "model"], columns="feature_set",
+                             values="skill_vs_persistence")
+        piv["d"] = piv.era5_chirps - piv.era5
+        mac["nChirps"] = str(c7.gauge_id.nunique())
+        for mdl in ["Ridge", "XGBoost"]:
+            d = piv.xs(mdl, level="model").d
+            mac[f"chirpsMedDelta{mdl}"] = f3(d.median())
+            mac[f"chirpsNPos{mdl}"] = str(int((d > 0).sum()))
+            mac[f"chirpsMaxDelta{mdl}"] = f3(d.max())
+        ratios = []
+        for gid in c7.gauge_id.unique():  # ERA5 / CHIRPS mean precipitation on common days
+            ch = pd.read_csv(cfg.CLIMATE_DIR / "chirps" / f"{gid}.csv", parse_dates=["date"])
+            er = pd.read_csv(cfg.CLIMATE_DIR / "era5" / f"{gid}.csv", parse_dates=["date"])
+            m = ch.merge(er, on="date").dropna(subset=["precip_chirps", "precip_era5"])
+            ratios.append(m.precip_era5.mean() / m.precip_chirps.mean())
+        mac["eraChirpsRatio"] = f"{np.median(ratios):.1f}"
+    else:
+        mac["nChirps"] = "0"
+
     # --- walk-forward (h = 7)
     w7 = wf[wf.horizon == 7]
     mac["wfNFolds"] = str(len(w7))

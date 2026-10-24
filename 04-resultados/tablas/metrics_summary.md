@@ -7,7 +7,7 @@
 - `nPeru`: 13
 - `nChile`: 6
 - `nFeatures`: 27
-- `runtimeMin`: 8
+- `runtimeMin`: 9
 - `nBoot`: 1000
 - `bootBlock`: 30
 - `focusTestStart`: 2021-09-22
@@ -98,6 +98,14 @@
 - `fusionNPosXGBoost`: 2
 - `glofasMedNse`: $-$0.10
 - `glofasNPosNse`: 1
+- `nChirps`: 13
+- `chirpsMedDeltaRidge`: $-$0.009
+- `chirpsNPosRidge`: 4
+- `chirpsMaxDeltaRidge`: 0.004
+- `chirpsMedDeltaXGBoost`: $-$0.013
+- `chirpsNPosXGBoost`: 6
+- `chirpsMaxDeltaXGBoost`: 0.602
+- `eraChirpsRatio`: 2.8
 - `wfNFolds`: 57
 - `wfNPos`: 53
 - `wfMedSkill`: 0.103

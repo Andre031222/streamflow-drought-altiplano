@@ -8,8 +8,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-337AB7?style=flat-square)](LICENSE)
 [![Python 3.14](https://img.shields.io/badge/Python-3.14-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![QGIS 4.2](https://img.shields.io/badge/Maps-QGIS%204.2-589632?style=flat-square&logo=qgis&logoColor=white)](https://qgis.org/)
-[![Tests](https://img.shields.io/badge/leakage%20tests-7%20passing-2E7D32?style=flat-square)](03-codigo/tests/test_pipeline.py)
-[![Skill](https://img.shields.io/badge/7--day%20skill%20%3E%200-18%2F19%20gauges-2E7D32?style=flat-square)](#key-results)
+[![Tests](https://img.shields.io/badge/leakage%20tests-9%20passing-2E7D32?style=flat-square)](03-codigo/tests/test_pipeline.py)
+[![Skill](https://img.shields.io/badge/7--day%20skill%20%3E%200-17%2F19%20gauges-2E7D32?style=flat-square)](#key-results)
 
 **Proceedings paper, accepted** (Paper ID 51) at the [*International Conference on Intelligent Computing, Communication and Data Science*](https://www.iciccds.com/) (**ICICCDS 2027**), to appear in the conference proceedings published by Springer in the series *Studies in Autonomic, Data-Driven and Industrial Computing* (ADIC, Scopus-indexed). It is a conference proceedings contribution, not a journal article. This repository contains the complete code, data extracts and results behind the contribution.
 
@@ -47,13 +47,13 @@ Every evaluation choice is explicit and tested:
 <table>
 <tr><td valign="top" width="52%">
 
-**Skill against persistence**, using the learner selected on validation (all 19 gauges)
+**Skill against persistence**, using the learner selected on three validation blocks (all 19 gauges)
 
 | Lead | Gauges with skill > 0 | 95% CI > 0 | Median skill |
 |:---:|:---:|:---:|:---:|
-| 1 day | 15 / 19 | 9 | 0.046 |
-| 3 days | 15 / 19 | 10 | 0.080 |
-| 7 days | **18 / 19** | **12** | **0.101** |
+| 1 day | 16 / 19 | 11 | 0.051 |
+| 3 days | 17 / 19 | 12 | 0.080 |
+| 7 days | **17 / 19** | **12** | **0.108** |
 
 Walk-forward check: **53 / 57** gauge–fold combinations have positive 7-day Ridge skill (median 0.103).
 
@@ -64,19 +64,20 @@ Walk-forward check: **53 / 57** gauge–fold combinations have positive 7-day Ri
 | Lead | Method | NSE | Skill [95% CI] |
 |:---:|---|:---:|:---:|
 | 1 d | Persistence | 0.902 | — |
-| 1 d | Random forest | **0.922** | **0.110** [0.064, 0.144] |
+| 1 d | Random forest (selected) | 0.912 | 0.054 [−0.003, 0.113] |
+| 1 d | Ridge (change) | **0.915** | **0.070** [0.011, 0.114] |
 | 7 d | Persistence | 0.461 | — |
 | 7 d | Ridge (change) | **0.578** | **0.115** [0.028, 0.208] |
 
-An earlier version of this pipeline was leaky and reported that persistence wins at one day. Under the corrected protocol, that conclusion **reverses**.
+An earlier version of this pipeline was leaky and reported that persistence wins at one day. Under the corrected protocol the learners gain at every lead, and Ridge is significant at 1, 3 and 7 days.
 
 </td></tr>
 </table>
 
-- **Drought is a different target.** RMSE gains do **not** improve detection of drought days. At 7 days, median CSI is **0.43 for persistence vs. 0.30 for the learners**: the learners raise fewer false alarms but miss more drought days.
-- **More data did not help.** Adding MERRA-2 precipitation and GloFAS v4 discharge changes the median skill by −0.004 (Ridge) and −0.008 (XGBoost). Raw GloFAS has a median NSE of −0.10 at these catchments.
+- **Drought is a different target.** RMSE gains do **not** improve detection of drought days. At 7 days, median CSI is **0.43 for persistence vs. 0.25 for the learners**: the learners raise fewer false alarms but miss more drought days. A drought threshold calibrated on validation CSI (same procedure for every method) raises the learners to **0.40**, but calibrated persistence (0.45) stays ahead at 16 of 19 gauges.
+- **More data did not help.** Adding MERRA-2 precipitation and GloFAS v4 discharge changes the median skill by −0.005 (Ridge) and −0.008 (XGBoost). Raw GloFAS has a median NSE of −0.10 at these catchments.
 - **Spatial structure.** Hydrological drought decorrelates over **≈ 582 km** (95% CI 330–1069 km). Same-region pairs correlate at median ρ = 0.28, cross-region pairs at 0.09.
-- **Skill follows regime, not location.** Moran's *I* = 0.018 (p = 0.37), so skill is not spatially clustered. Its strongest correlate is snow fraction (ρ = −0.57, p = 0.010; Holm-adjusted 0.071).
+- **Skill follows regime, not location.** Moran's *I* = −0.012 (p = 0.54), so skill is not spatially clustered. No catchment attribute is significant after Holm correction (strongest: snow fraction, ρ = −0.45, p = 0.056).
 
 <p align="center">
   <img src="04-resultados/figuras/fig08_spatial_skill_synchrony.png" width="88%" alt="Spatial statistics">
@@ -149,7 +150,7 @@ The maps need **QGIS 4.2**. The scripts relaunch themselves with the Python bund
 |---|---|---|---|
 | 1 | `python 03-codigo/extract_stations.py` | Selects the 19 gauges from the Andean-GC QC CSV (download from Zenodo first) | < 1 min |
 | 2 | `python 03-codigo/fetch_data.py` | ERA5, NASA POWER and GloFAS at each catchment; resumable, rate-limit safe | 30–60 min |
-| 3 | `python 03-codigo/run_experiment.py` | 19 gauges × 3 leads × 8 methods, bootstrap, DM, drought, fusion, walk-forward | ≈ 4 min (10 cores) |
+| 3 | `python 03-codigo/run_experiment.py` | 19 gauges × 3 leads × 8 methods, bootstrap, DM, drought, fusion, walk-forward | ≈ 8 min (10 cores) |
 | 4 | `python 03-codigo/plots.py` | Result figures | < 1 min |
 | 5 | `python 03-codigo/spatial_analysis.py` | Correlogram, Moran's *I*, skill drivers | ≈ 1 min |
 | 6 | `python 03-codigo/make_cifras.py` | Writes `cifras.tex` and `tab_*.tex` for the manuscript | seconds |

@@ -1,8 +1,8 @@
 attribute,label,rho,p_perm,n,p_holm
-frac_snow_ERA5,Snow fraction,-0.5704833997874109,0.0101,19,0.0707
-prcp_pci_ERA5,Precip. concentration,-0.4807017543859649,0.0413,19,0.24780000000000002
-aridity_ERA5,Aridity index,-0.4666666666666667,0.0436,19,0.24780000000000002
-low_prec_freq_ERA5,Dry-day frequency,0.4736842105263158,0.0439,19,0.24780000000000002
-elev_mean,Mean elevation,-0.21929824561403505,0.3646,19,1.0
-glacier_frac,Glacier fraction,0.08070175438596491,0.7459,19,1.0
-basin_area,Catchment area,0.02456140350877193,0.9226,19,1.0
+frac_snow_ERA5,Snow fraction,-0.45103843795692167,0.0563,19,0.3941
+low_prec_freq_ERA5,Dry-day frequency,0.4421052631578948,0.062,19,0.3941
+aridity_ERA5,Aridity index,-0.4140350877192982,0.076,19,0.3941
+prcp_pci_ERA5,Precip. concentration,-0.3929824561403509,0.1028,19,0.4112
+elev_mean,Mean elevation,-0.3578947368421052,0.1365,19,0.4112
+basin_area,Catchment area,0.2456140350877193,0.3107,19,0.6214
+glacier_frac,Glacier fraction,-0.1087719298245614,0.6488,19,0.6488

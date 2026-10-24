@@ -9,11 +9,14 @@ Protocol (per gauge and lead time h in {1, 3, 7} days):
      persistence); target Q_{t+h}.
   3. Chronological 70/15/15 split with an h-day embargo between blocks.
   4. Hyper-parameters and target form (level Q_{t+h} or change Q_{t+h}-Q_t) chosen on
-     validation RMSE; the chosen model is refit on train+val and scored once on test.
+     mean RMSE over three chronological validation blocks (the validation block and
+     two earlier blocks of train); the chosen model is refit on train+val and scored
+     once on test.
   5. Skill vs persistence with 95% moving-block-bootstrap intervals and a
      Diebold-Mariano test (Harvey et al. small-sample correction).
   6. Drought detection: variable-threshold level method (monthly 20th percentile of
-     the fit period); POD/FAR/CSI of forecast vs observed below-threshold days.
+     the fit period); POD/FAR/CSI of forecast vs observed below-threshold days, both
+     raw and with a forecast-side threshold factor chosen on validation CSI.
   7. Data-fusion ablation (base = ERA5; fused = + MERRA-2 precip + GloFAS
      discharge) on identical rows where the extra sources overlap (>= 1984).
   8. Expanding-window walk-forward (3 folds, Ridge with inner validation) on every gauge.
@@ -204,19 +207,54 @@ def fit_predict(name, p, Xtr, ytr, qtr, Xte, qte):
     return np.clip(yhat, 0.0, None)
 
 
-def tune_and_test(name, train, val, test, cols):
-    """Select config on validation RMSE, refit on train+val, predict test."""
-    best, best_rmse = None, np.inf
+def selection_blocks(train, val, h):
+    """(fit, score) pairs for model selection: the validation block and up to
+    SELECTION_BLOCKS - 1 earlier blocks of the same length cut from train, each
+    scored after an h-row embargo. Only train and val are used."""
+    pairs, n = [(train, val)], len(val)
+    for j in range(1, cfg.SELECTION_BLOCKS):
+        end = len(train) - (j - 1) * n
+        start = end - n
+        if start - h < n:  # keep at least one block of training data
+            break
+        pairs.append((train.iloc[: start - h], train.iloc[start:end]))
+    return pairs
+
+
+def tune_and_test(name, train, val, test, cols, h=0):
+    """Select config on mean RMSE over chronological validation blocks, refit on
+    train+val, predict test. Also returns the selected config's validation forecast."""
+    best, best_rmse, best_val = None, np.inf, None
+    pairs = selection_blocks(train, val, h)
     for p in model_grid(name):
-        yv = fit_predict(name, p, train[cols].values, train.y.values, train.q.values,
-                         val[cols].values, val.q.values)
-        r = float(np.sqrt(np.mean((val.y.values - yv) ** 2)))
+        scores = []
+        for fit_blk, sc_blk in pairs:
+            yv = fit_predict(name, p, fit_blk[cols].values, fit_blk.y.values, fit_blk.q.values,
+                             sc_blk[cols].values, sc_blk.q.values)
+            scores.append(float(np.sqrt(np.mean((sc_blk.y.values - yv) ** 2))))
+            if sc_blk is val:
+                yv_val = yv
+        r = float(np.mean(scores))
         if r < best_rmse:
-            best, best_rmse = p, r
+            best, best_rmse, best_val = p, r, yv_val
     fit = pd.concat([train, val])
     yhat = fit_predict(name, best, fit[cols].values, fit.y.values, fit.q.values,
                        test[cols].values, test.q.values)
-    return yhat, best, best_rmse
+    return yhat, best, best_rmse, best_val
+
+
+def calibrate_drought_factor(y_val, yhat_val, thr_val) -> float:
+    """Factor k for the forecast-side threshold (drought if yhat < k * thr) that
+    maximizes CSI on the validation block; 1.0 if validation has no drought days."""
+    obs = y_val < thr_val
+    if not obs.any():
+        return 1.0
+    best_k, best_csi = 1.0, -1.0
+    for k in cfg.DROUGHT_FACTORS:
+        csi = drought_scores(obs, yhat_val < k * thr_val)["CSI"]
+        if np.isfinite(csi) and csi > best_csi + 1e-12:
+            best_k, best_csi = k, csi
+    return best_k
 
 
 # ---------------------------------------------------------------------- per gauge
@@ -235,12 +273,16 @@ def run_gauge_horizon(row, df_raw: pd.DataFrame, h: int) -> dict:
     fit = pd.concat([train, val])
     y, pers = test.y.values, test.y_persist.values
     preds = {"persistence": pers, "climatology": climatology_predict(fit, test.target_date)}
+    val_preds = {"persistence": val.y_persist.values,
+                  "climatology": climatology_predict(train, val.target_date)}
     chosen, val_rmse = {}, {}
     for name in LEARNERS:
-        preds[name], chosen[name], val_rmse[name] = tune_and_test(name, train, val, test, cols)
+        preds[name], chosen[name], val_rmse[name], val_preds[name] = tune_and_test(
+            name, train, val, test, cols, h)
 
     thr = drought_threshold(fit)
     thr_t = thr.reindex(test.target_date.dt.month.values).values
+    thr_v = drought_threshold(train).reindex(val.target_date.dt.month.values).values
     base = {"gauge_id": row.gauge_id, "gauge_name": row.gauge_name, "region": row.region,
             "horizon": h, "n_train": len(train), "n_val": len(val), "n_test": len(test),
             "test_start": str(test.date.iloc[0].date()), "test_end": str(test.date.iloc[-1].date())}
@@ -249,9 +291,13 @@ def run_gauge_horizon(row, df_raw: pd.DataFrame, h: int) -> dict:
         lo, hi = block_bootstrap_skill(y, yhat, pers, cfg.N_BOOT, cfg.BOOT_BLOCK, cfg.RANDOM_STATE)
         dm_stat, dm_p = diebold_mariano(y, yhat, pers, h) if name != "persistence" else (np.nan, np.nan)
         ds = drought_scores(y < thr_t, yhat < thr_t)
+        k_cal = calibrate_drought_factor(val.y.values, val_preds[name], thr_v)
+        dc = drought_scores(y < thr_t, yhat < k_cal * thr_t)
         rows.append({**base, "model": name, **summarize(y, yhat, pers),
                      "skill_lo": lo, "skill_hi": hi, "dm_stat": dm_stat, "dm_p": dm_p,
                      **{f"drought_{k}": v for k, v in ds.items()},
+                     "drought_factor": k_cal,
+                     **{f"droughtcal_{k}": v for k, v in dc.items() if k != "n_events"},
                      "val_RMSE": val_rmse.get(name, np.nan),
                      "config": json.dumps(chosen.get(name, {}))})
     pred_df = pd.DataFrame({"date": test.date.values, "target_date": test.target_date.values,
@@ -288,7 +334,7 @@ def run_fusion_ablation(row, df_raw: pd.DataFrame, h: int) -> list[dict]:
     out = []
     for fs, cols in [("base", cols_b), ("fused", cols_f)]:
         for name in ["Ridge", "XGBoost"]:
-            yhat, p, _ = tune_and_test(name, train, val, test, cols)
+            yhat, p, _, _ = tune_and_test(name, train, val, test, cols, h)
             out.append({"gauge_id": row.gauge_id, "gauge_name": row.gauge_name, "region": row.region,
                         "horizon": h, "feature_set": fs, "model": name, "n_test": len(test),
                         **summarize(y, yhat, pers)})
@@ -317,7 +363,7 @@ def walk_forward(row, df_raw: pd.DataFrame, h: int) -> list[dict]:
         cut = int(len(fit) * 0.85)
         tr, va = fit.iloc[: cut - h], fit.iloc[cut:]
         te = data.iloc[te_a:te_b]
-        yhat, p, _ = tune_and_test("Ridge", tr, va, te, cols)
+        yhat, p, _, _ = tune_and_test("Ridge", tr, va, te, cols, h)
         pers = te.y_persist.values
         rows.append({"gauge_id": row.gauge_id, "gauge_name": row.gauge_name, "region": row.region,
                      "horizon": h, "fold": i + 1, "n_train": len(fit), "n_test": len(te),

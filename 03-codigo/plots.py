@@ -208,6 +208,54 @@ def fig_drought(met: pd.DataFrame, h: int) -> None:
     save(fig, f"fig05_drought_detection_h{h}")
 
 
+def fig_performance_diagram(met: pd.DataFrame, h: int) -> None:
+    """Performance diagram (Roebber 2009) of drought-day detection: success ratio
+    (1 - FAR) vs POD with CSI contours and frequency-bias lines. Small marks are
+    gauges, large marks the medians; the arrow shows threshold calibration."""
+    b = val_selected(met)
+    b = b[b.horizon == h].set_index("gauge_id")
+    p = met[(met.horizon == h) & (met.model == "persistence")].set_index("gauge_id")
+    groups = [  # (label, POD, FAR, colour, marker)
+        ("Persistence", p.drought_POD, p.drought_FAR, "#4A4A4A", "o"),
+        ("Raw learner", b.drought_POD, b.drought_FAR, OKABE["blue"], "D"),
+        ("Calibrated", b.droughtcal_POD, b.droughtcal_FAR, OKABE["vermillion"], "^"),
+    ]
+    fig, ax = plt.subplots(figsize=(2.75, 3.0))
+    sr = np.linspace(0.01, 1, 300)
+    SR, POD = np.meshgrid(sr, sr)
+    csi = 1.0 / (1.0 / SR + 1.0 / POD - 1.0)
+    ax.contour(SR, POD, csi, levels=np.arange(0.1, 1.0, 0.1), colors="#C8C8C8",
+                    linewidths=0.5, zorder=0)
+    for c in np.arange(0.1, 1.0, 0.1):  # CSI labels on the unbiased diagonal (POD = SR)
+        xd = 2 * c / (1 + c)
+        ax.text(xd + 0.012, xd - 0.012, f"{c:.1f}", fontsize=5.5, color="#9A9A9A",
+                ha="left", va="top", zorder=1)
+    for bias in (0.5, 1.0, 1.5, 2.0):
+        ax.plot(sr, bias * sr, ls=(0, (2, 2)), color="#D9D9D9", lw=0.5, zorder=0)
+        xb = min(1.0, 1.0 / bias)
+        ax.text(xb * 0.97, min(1.0, bias * xb) * 0.97, f"B={bias:g}", fontsize=5.5,
+                color="#9A9A9A", ha="right", va="top")
+    med = {}
+    for lab, pod, far, col, mk in groups:
+        x, y = 1 - far.values, pod.values
+        ok = np.isfinite(x) & np.isfinite(y)
+        ax.scatter(x[ok], y[ok], s=14, color=col, marker=mk, alpha=0.45, lw=0, zorder=2)
+        med[lab] = (np.median(x[ok]), np.median(y[ok]))
+        ax.scatter(*med[lab], s=70, color=col, marker=mk, edgecolor="white", lw=1.2, zorder=4,
+                   label=lab)
+    (x0, y0), (x1, y1) = med["Raw learner"], med["Calibrated"]
+    ax.annotate("", xy=(x1, y1), xytext=(x0, y0), zorder=3,
+                arrowprops=dict(arrowstyle="-|>", color="#333333", lw=0.8, shrinkA=6, shrinkB=6))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_aspect("equal")
+    ax.set_xlabel("Success ratio (1 $-$ FAR)")
+    ax.set_ylabel("Probability of detection (POD)")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=3, handletextpad=0.1,
+              columnspacing=0.6, fontsize=6.5)
+    save(fig, f"fig05_drought_performance_h{h}")
+
+
 def fig_fusion(fus: pd.DataFrame, h: int) -> None:
     f = fus[(fus.horizon == h) & fus.model.isin(["Ridge", "XGBoost"])]
     if f.empty:
@@ -277,6 +325,7 @@ def main() -> None:
     fig_skill_heatmap(met, 7)
     fig_lead_skill(met)
     fig_drought(met, 7)
+    fig_performance_diagram(met, 7)
     fig_fusion(fus, 7)
     fig_walkforward(wf, 7)
 

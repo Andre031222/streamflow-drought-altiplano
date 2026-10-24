@@ -83,3 +83,24 @@ def test_ssi_is_standard_normal_per_month():
     df = synthetic(n=365 * 20, gap=(0, 0))
     s = R.nonparametric_ssi(df.date, df.q, 30).dropna()
     assert abs(s.mean()) < 0.05 and abs(s.std() - 1) < 0.1
+
+
+def test_selection_blocks_use_only_train_and_val():
+    df = synthetic(n=3000, gap=(0, 0))
+    h = 7
+    f, cols = R.add_features(df, h)
+    d = f.dropna(subset=["y"] + cols).reset_index(drop=True)
+    tr, va, te = R.split_with_embargo(d, h)
+    pairs = R.selection_blocks(tr, va, h)
+    assert len(pairs) == 3
+    for fit_blk, sc_blk in pairs:
+        assert fit_blk.target_date.max() < sc_blk.date.min()   # embargo respected
+        assert sc_blk.target_date.max() < te.date.min()        # test never used
+
+
+def test_drought_factor_is_chosen_on_validation():
+    thr = np.full(200, 10.0)
+    y = np.r_[np.full(100, 8.0), np.full(100, 14.0)]           # 100 drought days
+    conservative = y + 3.0                                     # forecasts drought too rarely
+    assert R.calibrate_drought_factor(y, conservative, thr) > 1.0
+    assert R.calibrate_drought_factor(np.full(50, 20.0), np.full(50, 20.0), np.full(50, 10.0)) == 1.0

@@ -13,15 +13,15 @@
   "median_rho_same_region": 0.2776670060635047,
   "median_rho_cross_region": 0.08750911671382525,
   "n_same_region": 50,
-  "moran_I": 0.017848783832606744,
-  "moran_p": 0.3737,
+  "moran_I": -0.012377609945880682,
+  "moran_p": 0.5404,
   "moran_expected": -0.05555555555555555,
   "top_driver": {
     "attribute": "frac_snow_ERA5",
     "label": "Snow fraction",
-    "rho": -0.5704833997874109,
-    "p_perm": 0.0101,
+    "rho": -0.45103843795692167,
+    "p_perm": 0.0563,
     "n": 19,
-    "p_holm": 0.0707
+    "p_holm": 0.3941
   }
 }

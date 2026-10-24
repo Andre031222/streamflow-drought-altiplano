@@ -112,6 +112,13 @@ def main() -> None:
     mac["medPodBest"] = f2(b7.drought_POD.median())
     mac["nCsiBestBeats"] = str(int((b7.drought_CSI > p7.drought_CSI.reindex(b7.index)).sum()))
     mac["nCsiXgbLogBeats"] = str(int((xl.drought_CSI > p7.drought_CSI.reindex(xl.index)).sum()))
+    # drought decision calibrated on validation CSI (same procedure for every method)
+    mac["medCsiCalPers"] = f2(p7.droughtcal_CSI.median())
+    mac["medCsiCalBest"] = f2(b7.droughtcal_CSI.median())
+    mac["medPodCalBest"] = f2(b7.droughtcal_POD.median())
+    mac["medFarCalBest"] = f2(b7.droughtcal_FAR.median())
+    mac["nCsiCalBestBeats"] = str(int((b7.droughtcal_CSI > p7.droughtcal_CSI.reindex(b7.index)).sum()))
+    mac["nCsiCalImproves"] = str(int((b7.droughtcal_CSI > b7.drought_CSI).sum()))
 
     # --- fusion ablation (h = 7)
     f7 = fus[fus.horizon == 7]

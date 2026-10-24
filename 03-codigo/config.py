@@ -42,6 +42,13 @@ BOOT_BLOCK = 30           # days (moving-block bootstrap)
 
 MIN_ROWS_AFTER_FEATURES = 800
 
+# Model selection: mean validation RMSE over this many chronological blocks
+# (the official validation block plus earlier blocks of the same length in train)
+SELECTION_BLOCKS = 3
+
+# Drought decision: forecast-side threshold factor chosen on validation CSI
+DROUGHT_FACTORS = [round(0.80 + 0.05 * i, 2) for i in range(21)]  # 0.80 ... 1.80
+
 # Walk-forward (expanding window) on focus station
 WF_N_SPLITS = 3
 WF_MIN_TRAIN_FRAC = 0.50

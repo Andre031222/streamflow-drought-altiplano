@@ -75,7 +75,7 @@ An earlier version of this pipeline was leaky and reported that persistence wins
 </table>
 
 - **Drought is a different target.** RMSE gains do **not** improve detection of drought days. At 7 days, median CSI is **0.43 for persistence vs. 0.25 for the learners**: the learners raise fewer false alarms but miss more drought days. A drought threshold calibrated on validation CSI (same procedure for every method) raises the learners to **0.40**, but calibrated persistence (0.45) stays ahead at 16 of 19 gauges.
-- **More data did not help.** Adding MERRA-2 precipitation and GloFAS v4 discharge changes the median skill by −0.005 (Ridge) and −0.008 (XGBoost). Raw GloFAS has a median NSE of −0.10 at these catchments.
+- **More data did not help.** Adding MERRA-2 precipitation and GloFAS v4 discharge changes the median 7-day skill by −0.005 (Ridge) and −0.008 (XGBoost); raw GloFAS has a median NSE of −0.10. Adding CHIRPS v2.0 rainfall (0.05°, catchment mean, 13 gauges after 1981), which is 2.8 times drier than ERA5 there, changes it by −0.009 (Ridge, better at 4/13) and −0.013 (XGBoost).
 - **Spatial structure.** Hydrological drought decorrelates over **≈ 582 km** (95% CI 330–1069 km). Same-region pairs correlate at median ρ = 0.28, cross-region pairs at 0.09.
 - **Skill follows regime, not location.** Moran's *I* = −0.012 (p = 0.54), so skill is not spatially clustered. No catchment attribute is significant after Holm correction (strongest: snow fraction, ρ = −0.45, p = 0.056).
 
@@ -97,14 +97,16 @@ An earlier version of this pipeline was leaky and reported that persistence wins
 streamflow-drought-altiplano/
 ├── 00-gestion/                      # Project log, decisions, plan (Spanish)
 ├── 01-articulo/
-│   ├── caudal-sequia-altiplano_8p.pdf  # Proceedings version (8 pages, accepted)
-│   ├── caudal-sequia-altiplano.pdf     # Extended version (16 pages)
+│   ├── envio-cmt/ICICCDS2027-51-Vilca-Solorzano-CRC.pdf  # FINAL camera-ready version (8 pages)
+│   ├── caudal-sequia-altiplano_8p.pdf  # Version as submitted for review (Sep 2026, superseded)
+│   ├── caudal-sequia-altiplano.pdf     # Earlier extended draft (16 pages, superseded)
 │   ├── 00-abstract.md               # Abstract (generated from the manuscript)
 │   └── manuscrito/                  # Springer SVMult source
-│       ├── caudal-sequia-altiplano_8p.tex                          # 8-page proceedings version
-│       ├── caudal-sequia-altiplano.tex, results.tex, backmatter.tex  # extended version
+│       ├── caudal-sequia-altiplano_crc.tex                         # FINAL camera-ready source
+│       ├── caudal-sequia-altiplano_8p.tex                          # submitted version (superseded)
+│       ├── caudal-sequia-altiplano.tex, results.tex, backmatter.tex  # extended draft (superseded)
 │       ├── cifras.tex, tab_*.tex    # AUTO-GENERATED numbers and tables (make_cifras.py)
-│       ├── references.bib           # 58 cited references, DOIs verified on Crossref/DataCite
+│       ├── references.bib           # bibliography; every DOI verified on Crossref/DataCite
 │       └── references_verification.md
 ├── 02-datos/
 │   ├── fuentes/INVENTARIO.md        # Provenance, URLs, licences
@@ -155,7 +157,7 @@ The maps need **QGIS 4.2**. The scripts relaunch themselves with the Python bund
 | 5 | `python 03-codigo/spatial_analysis.py` | Correlogram, Moran's *I*, skill drivers | ≈ 1 min |
 | 6 | `python 03-codigo/make_cifras.py` | Writes `cifras.tex` and `tab_*.tex` for the manuscript | seconds |
 | 7 | `python 03-codigo/maps/make_fig00_qgis.py`<br>`python 03-codigo/maps/make_fig08_spatial_qgis.py` | QGIS maps | ≈ 1 min each |
-| 8 | `pdflatex` → `bibtex` → `pdflatex` ×2 on `caudal-sequia-altiplano_8p.tex` (or the extended `caudal-sequia-altiplano.tex`) | Builds the paper | seconds |
+| 8 | `pdflatex` → `bibtex` → `pdflatex` ×2 on `caudal-sequia-altiplano_crc.tex` | Builds the paper | seconds |
 
 Set `export MPLBACKEND=Agg` on headless machines. Steps 1–2 are needed only to rebuild the data from scratch, because the extracts and caches are already in the repository.
 

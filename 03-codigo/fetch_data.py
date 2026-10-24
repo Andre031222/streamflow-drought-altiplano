@@ -7,6 +7,8 @@ Sources (all public, no key):
     endpoint returns no precipitation).
   * NASA POWER daily precipitation (PRECTOTCORR, MERRA-2 bias-corrected with GPCP)
     and 2 m temperature at the catchment centroid (from 1981).
+  * CHIRPS v2.0 (0.05 deg) daily precipitation averaged over the catchment polygon
+    (ClimateSERV API, NASA/SERVIR; from 1981).
   * GloFAS v4 reanalysis daily river discharge (Open-Meteo Flood API, from 1984) on
     a 3 x 3 neighbourhood (0.05 deg) around the gauge; the cell used as a predictor
     is chosen later using the training period only (see run_experiment.py).
@@ -33,9 +35,12 @@ import config as cfg
 ERA5_URL = "https://archive-api.open-meteo.com/v1/archive"
 GLOFAS_URL = "https://flood-api.open-meteo.com/v1/flood"
 POWER_URL = "https://power.larc.nasa.gov/api/temporal/daily/point"
+CHIRPS_URL = "https://climateserv.servirglobal.net/api/"
+CATCHMENTS = cfg.RAW / "andean-gc" / "catchments_benchmark19.gpkg"
 ERA5_VARS = ["precipitation_sum", "temperature_2m_mean"]
 GLOFAS_START = pd.Timestamp("1984-01-01")
 POWER_START = pd.Timestamp("1981-01-01")
+CHIRPS_START = pd.Timestamp("1981-01-01")
 LAST_DAY = pd.Timestamp("2024-12-31")
 
 
@@ -108,6 +113,50 @@ def fetch_power(row, out: Path) -> None:
     ).to_csv(out, index=False)
 
 
+def chirps_polygon(gauge_id: str) -> dict:
+    """Catchment outline as a GeoJSON polygon (largest part, simplified); catchments
+    smaller than a few CHIRPS cells are buffered so that at least one cell centre falls inside."""
+    import geopandas as gpd
+    g = gpd.read_file(CATCHMENTS).set_index("gauge_id").geometry[gauge_id]
+    if g.geom_type == "MultiPolygon":
+        g = max(g.geoms, key=lambda p: p.area)
+    if g.area < 0.01:  # ~ 4 CHIRPS cells
+        g = g.buffer(0.03)
+    tol = 0.005
+    g0 = g
+    while True:  # keep the request URL short: at most ~40 vertices
+        g = g0.simplify(tol)
+        if len(g.exterior.coords) <= 40:
+            break
+        tol *= 1.5
+    return {"type": "Polygon", "coordinates": [[[round(x, 4), round(y, 4)] for x, y in g.exterior.coords]]}
+
+
+def fetch_chirps(row, out: Path) -> None:
+    if pd.Timestamp(row.date_end) < CHIRPS_START:
+        return
+    s, e = (pd.Timestamp(d) for d in period(row, CHIRPS_START))
+    geom = json.dumps(chirps_polygon(row.gauge_id))
+    parts = []
+    for a in pd.date_range(s, e, freq="10YS").union([s]):  # one request per decade
+        b = min(a + pd.DateOffset(years=10) - pd.Timedelta(days=1), e)
+        jid = json.loads(get(CHIRPS_URL + "submitDataRequest/", {
+            "datatype": 0, "intervaltype": 0, "operationtype": 5,  # CHIRPS daily, mean
+            "begintime": a.strftime("%m/%d/%Y"), "endtime": b.strftime("%m/%d/%Y"),
+            "geometry": geom, "isZip_CurrentDataType": "false"}))[0]
+        for _ in range(300):
+            prog = json.loads(get(CHIRPS_URL + "getDataRequestProgress/", {"id": jid}))[0]
+            if prog >= 100 or prog < 0:
+                break
+            time.sleep(3)
+        data = json.loads(get(CHIRPS_URL + "getDataFromRequest/", {"id": jid}))["data"]
+        parts.append(pd.DataFrame({"date": pd.to_datetime([d["date"] for d in data], format="%m/%d/%Y"),
+                                   "precip_chirps": [d["raw_value"] for d in data]}))
+    df = pd.concat(parts).drop_duplicates("date").sort_values("date")
+    df.loc[df.precip_chirps < 0, "precip_chirps"] = np.nan  # ClimateSERV no-data flag
+    df.to_csv(out, index=False)
+
+
 def fetch_glofas(row, out: Path) -> None:
     if pd.Timestamp(row.date_end) < GLOFAS_START:
         return
@@ -133,7 +182,8 @@ def main() -> None:
     meta = pd.read_csv(cfg.STATION_META)
     only = set(sys.argv[1:])  # optional: restrict to some sources, e.g. `glofas`
     manifest = []
-    for src, fn in [("era5", fetch_era5), ("merra2_power", fetch_power), ("glofas", fetch_glofas)]:
+    for src, fn in [("era5", fetch_era5), ("merra2_power", fetch_power), ("glofas", fetch_glofas),
+                    ("chirps", fetch_chirps)]:
         if only and src not in only:
             continue
         d = cfg.CLIMATE_DIR / src

@@ -20,6 +20,8 @@ Protocol (per gauge and lead time h in {1, 3, 7} days):
   7. Data-fusion ablation (base = ERA5; fused = + MERRA-2 precip + GloFAS
      discharge) on identical rows where the extra sources overlap (>= 1984).
   8. Expanding-window walk-forward (3 folds, Ridge with inner validation) on every gauge.
+  9. Resolution test: ERA5 vs ERA5 + CHIRPS (0.05 deg, catchment-mean) precipitation
+     on identical rows (CHIRPS from 1981).
 
 Usage (from project root, with venv activated):
     export MPLBACKEND=Agg
@@ -69,6 +71,9 @@ def load_station(row) -> pd.DataFrame:
     pw = cfg.CLIMATE_DIR / "merra2_power" / f"{row.gauge_id}.csv"
     if pw.exists():
         df = df.join(pd.read_csv(pw, parse_dates=["date"]).set_index("date"), how="left")
+    ch = cfg.CLIMATE_DIR / "chirps" / f"{row.gauge_id}.csv"
+    if ch.exists():
+        df = df.join(pd.read_csv(ch, parse_dates=["date"]).set_index("date"), how="left")
     gl = cfg.CLIMATE_DIR / "glofas" / f"{row.gauge_id}.csv"
     if gl.exists():
         g = pd.read_csv(gl, parse_dates=["date"]).set_index("date").add_prefix("glofas_")
@@ -95,7 +100,8 @@ def snap_glofas(df: pd.DataFrame, fit_end: pd.Timestamp) -> pd.Series | None:
 
 
 # ----------------------------------------------------------------------- features
-def add_features(df: pd.DataFrame, h: int, fused: bool = False) -> tuple[pd.DataFrame, list]:
+def add_features(df: pd.DataFrame, h: int, fused: bool = False,
+                 chirps: bool = False) -> tuple[pd.DataFrame, list]:
     out = df.copy()
     doy = out.date.dt.dayofyear
     out["sin_doy"] = np.sin(2 * np.pi * doy / 365.25)
@@ -121,6 +127,8 @@ def add_features(df: pd.DataFrame, h: int, fused: bool = False) -> tuple[pd.Data
     out["t2m_mean30"] = out.t2m_era5.rolling(30, min_periods=24).mean()
     cols += ["t2m_era5", "t2m_mean7", "t2m_mean30"]
 
+    if chirps:
+        precip_block("precip_chirps", "pch")
     if fused:
         precip_block("precip_merra2", "pm2")
         out["gq_lag0"] = out["glofas_q"]
@@ -348,6 +356,27 @@ def run_fusion_ablation(row, df_raw: pd.DataFrame, h: int) -> list[dict]:
     return out
 
 
+def run_chirps_ablation(row, df_raw: pd.DataFrame, h: int) -> list[dict]:
+    """ERA5 vs ERA5 + CHIRPS (0.05 deg, catchment mean) precipitation on identical rows."""
+    if "precip_chirps" not in df_raw or df_raw.precip_chirps.notna().sum() < 365:
+        return []
+    feat_c, cols_c = add_features(df_raw, h, chirps=True)
+    _, cols_b = add_features(df_raw, h)
+    data = feat_c.dropna(subset=["y"] + cols_c).reset_index(drop=True)
+    if len(data) < cfg.MIN_ROWS_AFTER_FEATURES:
+        return []
+    train, val, test = split_with_embargo(data, h)
+    y, pers = test.y.values, test.y_persist.values
+    out = []
+    for fs, cols in [("era5", cols_b), ("era5_chirps", cols_c)]:
+        for name in ["Ridge", "XGBoost"]:
+            yhat, p, _, _ = tune_and_test(name, train, val, test, cols, h)
+            out.append({"gauge_id": row.gauge_id, "gauge_name": row.gauge_name, "region": row.region,
+                        "horizon": h, "feature_set": fs, "model": name, "n_test": len(test),
+                        **summarize(y, yhat, pers)})
+    return out
+
+
 def walk_forward(row, df_raw: pd.DataFrame, h: int) -> list[dict]:
     """Expanding window: Ridge (alpha/target chosen on the last 15% of each fold's train)."""
     feat, cols = add_features(df_raw, h)
@@ -375,7 +404,8 @@ def walk_forward(row, df_raw: pd.DataFrame, h: int) -> list[dict]:
 def process_gauge(row) -> dict:
     t0 = time.time()
     df = load_station(row)
-    res = {"gauge_id": row.gauge_id, "metrics": [], "preds": {}, "splits": {}, "fusion": [], "wf": []}
+    res = {"gauge_id": row.gauge_id, "metrics": [], "preds": {}, "splits": {}, "fusion": [], "wf": [],
+           "chirps": []}
     for h in cfg.HORIZONS:
         r = run_gauge_horizon(row, df, h)
         if not r:
@@ -386,6 +416,7 @@ def process_gauge(row) -> dict:
         if row.gauge_id == cfg.FOCUS_STATION_ID:
             res["preds"][h] = r["preds"]
         res["fusion"] += run_fusion_ablation(row, df, h)
+        res["chirps"] += run_chirps_ablation(row, df, h)
         res["wf"] += walk_forward(row, df, h)
     res["seconds"] = round(time.time() - t0, 1)
     print(f"  done {row.gauge_id} {row.gauge_name} ({res['seconds']} s)", flush=True)
@@ -421,6 +452,8 @@ def main() -> None:
     metrics.to_csv(cfg.TAB / "metrics_by_station.csv", index=False)
     pd.DataFrame([m for r in results for m in r["fusion"]]).to_csv(
         cfg.TAB / "metrics_fusion_ablation.csv", index=False)
+    pd.DataFrame([m for r in results for m in r["chirps"]]).to_csv(
+        cfg.TAB / "metrics_chirps_ablation.csv", index=False)
     pd.DataFrame([m for r in results for m in r["wf"]]).to_csv(
         cfg.TAB / "metrics_walkforward.csv", index=False)
     for r in results:

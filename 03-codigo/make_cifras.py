@@ -18,6 +18,7 @@ import config as cfg
 from plots import LEARNERS, REGION_ORDER, short, val_selected
 
 OUT = cfg.MANUSCRIPT
+OUT.mkdir(parents=True, exist_ok=True)  # the manuscript itself is not distributed with the code
 
 
 PROSE = {"RandomForest": "random forest", "HistGB": "histogram gradient boosting",

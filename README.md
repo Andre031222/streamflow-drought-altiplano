@@ -13,7 +13,7 @@
 
 **Proceedings paper, accepted** (Paper ID 51) at the [*International Conference on Intelligent Computing, Communication and Data Science*](https://www.iciccds.com/) (**ICICCDS 2027**), to appear in the conference proceedings published by Springer in the series *Studies in Autonomic, Data-Driven and Industrial Computing* (ADIC, Scopus-indexed). It is a conference proceedings contribution, not a journal article. This repository contains the complete code, data extracts and results behind the contribution.
 
-> **Status (16 Nov 2026):** accepted; final camera-ready version (8 pages) in [`01-articulo/envio-cmt/`](01-articulo/envio-cmt/). Proceedings to be published by Springer after the conference (25–26 January 2027).
+> **Status (16 Nov 2026):** accepted; camera-ready version prepared. Proceedings to be published by Springer after the conference (25–26 January 2027). This repository holds the data and code only; the manuscript is not distributed here.
 
 ---
 
@@ -97,34 +97,21 @@ An earlier version of this pipeline was leaky and reported that persistence wins
 
 ```
 streamflow-drought-altiplano/
-├── 00-gestion/                      # Project log, decisions, plan (Spanish)
-├── 01-articulo/
-│   ├── envio-cmt/ICICCDS2027-51-Vilca-Solorzano-CRC.pdf  # FINAL camera-ready version (8 pages)
-│   ├── caudal-sequia-altiplano_8p.pdf  # Version as submitted for review (Sep 2026, superseded)
-│   ├── caudal-sequia-altiplano.pdf     # Earlier extended draft (16 pages, superseded)
-│   ├── 00-abstract.md               # Abstract (generated from the manuscript)
-│   └── manuscrito/                  # Springer SVMult source
-│       ├── caudal-sequia-altiplano_crc.tex                         # FINAL camera-ready source
-│       ├── caudal-sequia-altiplano_8p.tex                          # submitted version (superseded)
-│       ├── caudal-sequia-altiplano.tex, results.tex, backmatter.tex  # extended draft (superseded)
-│       ├── cifras.tex, tab_*.tex    # AUTO-GENERATED numbers and tables (make_cifras.py)
-│       ├── references.bib           # bibliography; every DOI verified on Crossref/DataCite
-│       └── references_verification.md
 ├── 02-datos/
 │   ├── fuentes/INVENTARIO.md        # Provenance, URLs, licences
 │   ├── crudos/stations/             # 19 Andean-GC gauge extracts + benchmark_stations.csv
-│   ├── crudos/clima/                # ERA5 · NASA POWER (MERRA-2) · GloFAS v4 caches + manifests
+│   ├── crudos/clima/                # ERA5 · NASA POWER (MERRA-2) · CHIRPS v2.0 · GloFAS v4 caches
 │   ├── crudos/andean-gc/            # Metadata + catchment polygons of the 19 gauges
 │   └── procesados/                  # Nonparametric SSI-30, focus-gauge forecasts
 ├── 03-codigo/
 │   ├── config.py                    # All settings (splits, leads, features, bootstrap)
 │   ├── extract_stations.py          # Gauge selection from Andean-GC
-│   ├── fetch_data.py                # ERA5 / POWER / GloFAS download (rate-limit safe, resumable)
+│   ├── fetch_data.py                # ERA5 / POWER / CHIRPS / GloFAS download (resumable)
 │   ├── run_experiment.py            # Leakage-free benchmark (parallel over gauges)
 │   ├── metrics_utils.py             # NSE, KGE, skill, block bootstrap, Diebold–Mariano, CSI
 │   ├── plots.py                     # Figures (seaborn + Crameri colour maps, 600 dpi)
 │   ├── spatial_analysis.py          # Correlogram, Moran's I, skill drivers
-│   ├── make_cifras.py               # Writes every number of the paper
+│   ├── make_cifras.py               # Writes every number of the paper as LaTeX macros
 │   ├── maps/                        # PyQGIS map scripts + .qgz project
 │   └── tests/test_pipeline.py       # Leakage, calendar, embargo and metric tests
 └── 04-resultados/
@@ -157,9 +144,8 @@ The maps need **QGIS 4.2**. The scripts relaunch themselves with the Python bund
 | 3 | `python 03-codigo/run_experiment.py` | 19 gauges × 3 leads × 8 methods, bootstrap, DM, drought, fusion, walk-forward | ≈ 8 min (10 cores) |
 | 4 | `python 03-codigo/plots.py` | Result figures | < 1 min |
 | 5 | `python 03-codigo/spatial_analysis.py` | Correlogram, Moran's *I*, skill drivers | ≈ 1 min |
-| 6 | `python 03-codigo/make_cifras.py` | Writes `cifras.tex` and `tab_*.tex` for the manuscript | seconds |
+| 6 | `python 03-codigo/make_cifras.py` | Writes every number and table of the paper (`cifras.tex`, `tab_*.tex`) and `04-resultados/tablas/metrics_summary.md` | seconds |
 | 7 | `python 03-codigo/maps/make_fig00_qgis.py`<br>`python 03-codigo/maps/make_fig08_spatial_qgis.py` | QGIS maps | ≈ 1 min each |
-| 8 | `pdflatex` → `bibtex` → `pdflatex` ×2 on `caudal-sequia-altiplano_crc.tex` | Builds the paper | seconds |
 
 Set `export MPLBACKEND=Agg` on headless machines. Steps 1–2 are needed only to rebuild the data from scratch, because the extracts and caches are already in the repository.
 

@@ -46,3 +46,14 @@ __pycache__/
 
 # Submission package (contains private.tex with the telephone)
 01-articulo/envio-cmt/*.zip
+
+# Manuscript, submission and management material are kept outside the repository
+00-gestion/
+00-decision.md
+00-gestion-plan-4h.md
+01-articulo/
+05-plantilla-springer/
+antecedentes_pacha_rl/
+*.tex
+*.bib
+*.bbl

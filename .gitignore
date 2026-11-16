@@ -43,3 +43,6 @@ __pycache__/
 # Private submission data (telephone) and the CMT submission PDF
 01-articulo/manuscrito/private.tex
 01-articulo/envio-cmt/
+
+# Submission package (contains private.tex with the telephone)
+01-articulo/envio-cmt/*.zip

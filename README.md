@@ -13,6 +13,8 @@
 
 **Proceedings paper, accepted** (Paper ID 51) at the [*International Conference on Intelligent Computing, Communication and Data Science*](https://www.iciccds.com/) (**ICICCDS 2027**), to appear in the conference proceedings published by Springer in the series *Studies in Autonomic, Data-Driven and Industrial Computing* (ADIC, Scopus-indexed). It is a conference proceedings contribution, not a journal article. This repository contains the complete code, data extracts and results behind the contribution.
 
+> **Status (16 Nov 2026):** accepted; final camera-ready version (8 pages) in [`01-articulo/envio-cmt/`](01-articulo/envio-cmt/). Proceedings to be published by Springer after the conference (25–26 January 2027).
+
 ---
 
 ## Overview
